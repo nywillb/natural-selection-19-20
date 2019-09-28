@@ -34,7 +34,7 @@ class Byrt extends LinearOpMode {
 
                 byrt.straightDrive(leftPower, rightPower);
             } else if (gamepad1.left_stick_x < -0.13 || gamepad1.left_stick_x > 0.13) {
-                byrt.strafeLeft(gamepad1.left_stick_x);
+                byrt.strafeRight(gamepad1.left_stick_x);
             } else {
                 byrt.straightDrive(0.0, 0.0);
             }
