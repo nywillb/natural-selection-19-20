@@ -36,31 +36,33 @@ public class Pyppyn extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            boolean isSlowMode = gamepad1.right_bumper;
+
             double drive = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             if (gamepad1.left_stick_y < -0.13 || gamepad1.left_stick_y > 0.13) {
-                double leftPower = Range.clip(drive + turn, MIN_DRIVE_SPEED, MAX_DRIVE_SPEED);
-                double rightPower = Range.clip(drive - turn, MIN_DRIVE_SPEED, MAX_DRIVE_SPEED);
-                pyppyn.straightDrive(leftPower, rightPower);
+                if(isSlowMode){
+                    double leftPower = Range.clip(drive + turn, -SLOW_MODE_SPEED, SLOW_MODE_SPEED);
+                    double rightPower = Range.clip(drive - turn, -SLOW_MODE_SPEED, SLOW_MODE_SPEED);
+                    pyppyn.straightDrive(leftPower, rightPower);
+                } else {
+                    double leftPower = Range.clip(drive + turn, MIN_DRIVE_SPEED, MAX_DRIVE_SPEED);
+                    double rightPower = Range.clip(drive - turn, MIN_DRIVE_SPEED, MAX_DRIVE_SPEED);
+                    pyppyn.straightDrive(leftPower, rightPower);
+                }
             } else if (gamepad1.right_stick_x > 0.13) {
-                if (gamepad1.b) pyppyn.slowRotateCounterclockwise(SLOW_MODE_SPIN_SPEED);
+                if (isSlowMode) pyppyn.slowRotateCounterclockwise(SLOW_MODE_SPIN_SPEED);
                 else pyppyn.rotateCounterclockwise(SPIN_SPEED);
             } else if (gamepad1.right_stick_x < -0.13) {
-                if (gamepad1.b) pyppyn.slowRotateClockwise(SLOW_MODE_SPIN_SPEED);
+                if (isSlowMode) pyppyn.slowRotateClockwise(SLOW_MODE_SPIN_SPEED);
                 else pyppyn.rotateClockwise(SPIN_SPEED);
             } else if (gamepad1.left_stick_x < -0.13 || gamepad1.left_stick_x > 0.13) {
                 pyppyn.strafeRight(gamepad1.left_stick_x);
-            } else if (gamepad1.dpad_up) {
-                pyppyn.straightDrive(SLOW_MODE_SPEED, SLOW_MODE_SPEED);
-            } else if (gamepad1.dpad_down) {
-                pyppyn.straightDrive(-SLOW_MODE_SPEED, -SLOW_MODE_SPEED);
-            } else if (gamepad1.dpad_left) {
-                pyppyn.strafeLeft(SLOW_MODE_SPEED);
-            } else if (gamepad1.dpad_right) {
-                pyppyn.strafeRight(SLOW_MODE_SPEED);
             } else {
                 pyppyn.stop();
             }
+
+
 
             if(gamepad2.left_trigger > 0.13) {
                 pyppyn.lift(Range.clip(gamepad2.left_trigger, 0.0, MAX_LIFT_SPEED));
