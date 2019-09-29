@@ -1,107 +1,80 @@
 package org.firstinspires.ftc.teamcode.intelligentdesign;
 
-import fi.iki.elonen.NanoHTTPD;
-import org.firstinspires.ftc.teamcode.intelligentdesign.defaultroutes.HelloWorldRoute;
-import org.firstinspires.ftc.teamcode.intelligentdesign.defaultroutes.IDIntroRoute;
+import android.content.Context;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
-/**
- * Intelligent Design is a simple web server designed for FTC by team 17126 Natural Selection
- *
- * @author William Barkoff
- * @author FTC Team 17126 Natural Selection
- */
-public class IntelligentDesign extends NanoHTTPD {
-    private HashMap<String, IDHandler> routes = new HashMap<>();
+public class IntelligentDesign {
+    private JSONArray log = new JSONArray();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Context context = Application.getAppContext();
+    private static File logFolder = new File(Application.getAppContext().getFilesDir(), "intelligentDesign-logs");
+    private File file;
 
-    /**
-     * Creates an IntelligentDesign server on port 17126.
-     * @throws IOException In the event that there is an issue starting the server, an IOException is thrown.
-     */
-    public IntelligentDesign() throws IOException {
-        super(17126);
-        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-    }
-
-    /**
-     * Creates an Intelligent Design server.
-     * @param port Port to start the server on
-     * @throws IOException In the event that there is an issue starting the server, and IOException is thrown.
-     */
-    public IntelligentDesign(int port) throws IOException {
-        super(port);
-        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-
-        this.addDefaultRoutes();
-    }
-
-    /**
-     * Creates an Intelligent Design server.
-     * @param hostname Hostname to start server on
-     * @param port Port to start server on
-     * @throws IOException In the event that there is an issue starting the server, and IOException is thrown.
-     */
-    public IntelligentDesign(String hostname, int port) throws IOException {
-        super(hostname, port);
-        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-
-        this.addDefaultRoutes();
-    }
-
-    /**
-     * Adds the default routes.
-     * @see HelloWorldRoute
-     * @see IDIntroRoute
-     */
-    private void addDefaultRoutes() {
-        Map<String, IDHandler> defaultRoutes = new HashMap<>();
-        defaultRoutes.put("/hello", new HelloWorldRoute());
-        defaultRoutes.put("/", new IDIntroRoute(getVersion()));
-
-        for (Map.Entry<String, IDHandler> route : defaultRoutes.entrySet()) {
-            routes.put(route.getKey(), route.getValue());
+    public IntelligentDesign() throws IOException, LogFileAlreadyExistsException {
+        file = new File(logFolder, IntelligentDesign.createFileName());
+        if(!file.createNewFile()) {
+            throw new LogFileAlreadyExistsException(file.getAbsolutePath());
         }
     }
 
-    /**
-     * Registers a route for use with Intelligent Design
-     * @param route route that the handler should be used with.
-     * @param handler Intelligent Design handler object
-     * @throws RouteAlreadyExistsException Thrown in the case that the route is already specified
-     * @throws NullPointerException Thrown if the route or the handler is null.
-     */
-    public void registerRoute(String route, IDHandler handler) throws RouteAlreadyExistsException, NullPointerException {
-        IDHandler existingRoute = routes.get(route);
-        if(route == null || handler == null) {
-            throw new NullPointerException("Route and handler cannot be null.");
-        } else if(existingRoute != null) {
-            throw new RouteAlreadyExistsException("Route " + route + " already exists.");
-        }
-        routes.put(route, handler);
+    public void add(Object obj) throws JSONException {
+        JSONObject logItem = new JSONObject();
+
+        logItem.put("matchtime", null);
+        logItem.put("timestamp", System.currentTimeMillis());
+        logItem.put("stacktrace", Arrays.toString(Thread.currentThread().getStackTrace()));
+        String jsonObjStr = gson.toJson(obj);
+        Object jsonObj = new JSONTokener(jsonObjStr).nextValue();
+        logItem.put("data", jsonObj);
+
+        log.put(logItem);
     }
 
-    /**
-     * Handles a route. This should not be called.
-     * @param session The session that is used.
-     * @return A response object.
-     */
-    @Override
-    public Response serve(IHTTPSession session) {
-        IDHandler handler = routes.get(session.getUri());
-        if(handler == null) {
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", session.getUri() + " was not found.");
-        }
-        return handler.onAction(session.getMethod(), session.getUri(), session.getParameters());
+    public void saveLog() throws FileNotFoundException {
+        FileOutputStream stream = new FileOutputStream(this.file);
     }
 
-    /**
-     * Returns the version of Intelligent Design being used.
-     * @return the version of Intelligent Design being used.
-     */
-    public static String getVersion() {
-        return "0.0.1";
+    public static String createFileName() {
+        TimeZone nycTime = TimeZone.getTimeZone("America/New_York");
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.US);
+        formatter.setTimeZone(nycTime);
+        return formatter.format(new Date()) + "-log.json";
+    }
+
+    public static String[] getLogFiles() {
+        File[] files = logFolder.listFiles();
+        String[] logs = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            logs[i] = files[i].getName();
+        }
+        return logs;
+    }
+
+    public JSONArray getLog() {
+        return log;
+    }
+
+    public static File getLogFolder() {
+        return logFolder;
+    }
+
+    public File getFile() {
+        return file;
     }
 }
