@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.intelligentdesign.api.response;
+package org.firstinspires.ftc.teamcode.intelligentdesign.api;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IntelligentDesign;
-import org.firstinspires.ftc.teamcode.intelligentdesign.api.IDEndpointHandler;
+import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiErrorResponse;
+import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 

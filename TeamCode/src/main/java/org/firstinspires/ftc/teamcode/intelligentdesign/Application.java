@@ -1,17 +1,27 @@
 package org.firstinspires.ftc.teamcode.intelligentdesign;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 public class Application extends android.app.Application {
-    private static Context context;
+    private Context context;
+    private Resources resources;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Application.context = getApplicationContext();
+        this.context = getApplicationContext();
+        this.resources = getResources();
+    }
+
+    private Application() {
+        this.onCreate();
     }
 
     public static Context getAppContext() {
-        return Application.context;
+        return new Application().context;
+    }
+    public static Resources getAppResources() {
+        return new Application().resources;
     }
 }

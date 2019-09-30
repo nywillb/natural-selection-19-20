@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.intelligentdesign;
 
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import fi.iki.elonen.NanoHTTPD;
 import org.firstinspires.ftc.teamcode.intelligentdesign.api.APIRouter;
 import org.firstinspires.ftc.teamcode.intelligentdesign.api.IDEndpointHandler;
-import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiResponse;
+import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiErrorResponse;
+import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDFileResponse;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 /**
@@ -66,42 +71,17 @@ public class IDServer extends NanoHTTPD {
         if(route.startsWith("/api")) {
             return APIHandler.handle(session.getMethod(), session.getUri(), session.getParameters());
         } else {
-            //TODO: Add static handling
-            return new IDApiResponse("TODO: Add static handling");
+            if(route.equals("/")) {
+                route = "/index.html";
+            }
+            Resources resources = Application.getAppResources();
+            AssetManager assets = resources.getAssets();
+            try {
+                InputStream fileStream = assets.open("intelligentdesign-ui" + route);
+                return IDFileResponse.build(fileStream, route);
+            } catch (IOException e) {
+                return IDApiErrorResponse.build(Response.Status.NOT_FOUND, "file " + route + " not found.");
+            }
         }
-    }
-
-    /**
-     * Gets a mime type from a file name
-     * @param path path of file
-     * @return mime type
-     */
-    public static String getMimeType(String path) {
-        if(path.endsWith(".json")) {
-            return "application/json";
-        } else if (path.endsWith("css")) {
-            return "text/css";
-        } else if (path.endsWith("js")) {
-            return "text/javascript";
-        } else if(path.endsWith("html") || path.endsWith("htm")) {
-            return "text/html";
-        } else if(path.endsWith("png")) {
-            return "image/png";
-        } else if(path.endsWith("jpg") || path.endsWith("jpeg")) {
-            return "image/jpeg";
-        } else if(path.endsWith("pdf")) {
-            return "application/pdf";
-        } else if (path.endsWith("txt")) {
-            return "text/plain";
-        }
-        return "application/octet-stream";
-    }
-
-    /**
-     * Returns the version of Intelligent Design being used.
-     * @return the version of Intelligent Design being used.
-     */
-    public static String getVersion() {
-        return "0.0.1";
     }
 }

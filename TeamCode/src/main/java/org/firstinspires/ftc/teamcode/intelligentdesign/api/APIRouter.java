@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.intelligentdesign.api;
 
 import fi.iki.elonen.NanoHTTPD;
-import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.GetLogEndpoint;
 import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiErrorResponse;
 import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiResponse;
 
@@ -15,6 +14,7 @@ public class APIRouter implements IDEndpointHandler {
     public APIRouter() {
         routes.put("/api/getAllLogs", new GetAllLogsEndpoint());
         routes.put("/api/get", new GetLogEndpoint());
+        routes.put("/api", new GetVersionEndpoint());
     }
 
     @Override

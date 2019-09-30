@@ -77,4 +77,12 @@ public class IntelligentDesign {
     public File getFile() {
         return file;
     }
+
+    /**
+     * Returns the version of Intelligent Design being used.
+     * @return the version of Intelligent Design being used.
+     */
+    public static String getVersion() {
+        return "0.0.1";
+    }
 }
