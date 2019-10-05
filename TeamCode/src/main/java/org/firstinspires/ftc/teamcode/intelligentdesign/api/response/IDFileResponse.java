@@ -53,6 +53,8 @@ public class IDFileResponse extends NanoHTTPD.Response {
             return "application/pdf";
         } else if (path.endsWith("txt")) {
             return "text/plain";
+        } else if (path.endsWith(".woff2")) {
+            return "font/woff2";
         }
         return "application/octet-stream";
     }

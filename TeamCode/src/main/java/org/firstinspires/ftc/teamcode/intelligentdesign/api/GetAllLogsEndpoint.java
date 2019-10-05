@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.intelligentdesign.api.response.IDApiRespon
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,12 @@ public class GetAllLogsEndpoint implements IDEndpointHandler {
         JSONArray filesJSON;
         try {
             filesJSON = new JSONArray(files);
+            JSONObject resp = new JSONObject();
+            resp.put("status", "ok");
+            resp.put("logs", filesJSON);
+            return new IDApiResponse("application/json", resp.toString());
         } catch (JSONException e) {
             return IDApiErrorResponse.build(Status.INTERNAL_ERROR, "internal_server_error");
         }
-
-        return new IDApiResponse("application/json", filesJSON.toString());
     }
 }

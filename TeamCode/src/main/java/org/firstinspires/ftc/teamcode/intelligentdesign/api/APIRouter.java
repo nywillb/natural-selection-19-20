@@ -19,6 +19,9 @@ public class APIRouter implements IDEndpointHandler {
 
     @Override
     public IDApiResponse handle(NanoHTTPD.Method method, String route, Map<String, List<String>> parameters) {
+        if(route.endsWith(".json")) {
+            route = route.substring(0, route.length() - 6);
+        }
         IDEndpointHandler handler = routes.get(route);
         if(handler == null) {
             return IDApiErrorResponse.build(NanoHTTPD.Response.Status.NOT_FOUND, "Endpoint not found");
