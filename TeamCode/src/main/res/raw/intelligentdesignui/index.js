@@ -1,5 +1,5 @@
 $(document).ready(async () => {
-    let logReq = await fetch("/api/getAllLogs");
+    let logReq = await fetch("/api/getAllLogs.json");
     console.log(JSON.stringify(logReq, null, "\t"))
     if(!logReq.ok) {
         let errorStr = "An error occured. Response code <code>"
@@ -11,5 +11,7 @@ $(document).ready(async () => {
         return;
     }
     let logs = await logReq.json();
-    console.log(logs)
-})
+    $("#loading-screen").hide();
+    $("#app").show();
+    logs.logs.forEach((it, i) => $("#log-list").append("<a class=\"nav-link\" data-toggle=\"pill\" role=\"tab\" aria-selected=\"false\" data-log=\"" + it + "\">" + it + "</a>"))
+});
