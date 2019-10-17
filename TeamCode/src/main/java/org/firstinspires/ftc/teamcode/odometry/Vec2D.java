@@ -88,11 +88,29 @@ public class Vec2D
     }
 
     /**
-     * Instantiates a zero filled vector.
+     * Gets the magnitude of the vector.
      *
+     * @return the magnitude
      */
-    public Vec2D() {
-        this(0, 0);
+    public double getMagnitude() {
+        return Math.sqrt(this.getX()*this.getX() + this.getY()*this.getY());
+    }
+
+    /**
+     * Normalizes the vector (modifies it to be of magnitude 1)
+     */
+    public void normalize() {
+        this.timesScalar(1/this.getMagnitude());
+    }
+
+    /**
+     * Returns the angle of the vector in radian
+     * measure (from [0, 2pi) )
+     *
+     * @return the angle
+     */
+    public double getAngle() {
+        return Math.atan2(this.getY(), this.getX());
     }
 
     /**
@@ -104,6 +122,14 @@ public class Vec2D
     public Vec2D(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Instantiates a zero filled vector.
+     *
+     */
+    public Vec2D() {
+        this(0.0, 0.0);
     }
 
     /**
