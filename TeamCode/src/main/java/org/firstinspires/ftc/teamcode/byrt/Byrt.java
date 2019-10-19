@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.ByrtRobot;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp(name = "\uD83D\uDC1D Byrt", group = "Byrt")
-class Byrt extends LinearOpMode {
+public class Byrt extends LinearOpMode {
 
     ElapsedTime runtime = new ElapsedTime();
     SpinnerPosition[] spinnerPositions = new SpinnerPosition[]{SpinnerPosition.HALF, SpinnerPosition.OUT};
@@ -53,6 +53,7 @@ class Byrt extends LinearOpMode {
                 byrt.lift(0.0);
             }
 
+            /*
             if(gamepad1.a && !debounceA) {
                 currentSpinnerPosition++;
                 currentSpinnerPosition %= spinnerPositions.length;
@@ -69,6 +70,7 @@ class Byrt extends LinearOpMode {
             if(gamepad1.y && !debounceY) {
                 byrt.setFlickerOut(!byrt.isFlickerOut());
             }
+             */
 
             debounceA = gamepad1.a;
             debounceX = gamepad1.x;

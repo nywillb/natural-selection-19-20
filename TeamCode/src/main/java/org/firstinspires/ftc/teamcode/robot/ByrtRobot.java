@@ -42,9 +42,9 @@ public class ByrtRobot implements Robot {
 
         lift = hardwareMap.get(DcMotor.class, "lift");
 
-        flicker = hardwareMap.get(Servo.class, "flicker");
-        spinner = hardwareMap.get(Servo.class, "spinner");
-        claw = hardwareMap.get(Servo.class, "claw");
+//        flicker = hardwareMap.get(Servo.class, "flicker");
+//        spinner = hardwareMap.get(Servo.class, "spinner");
+//        claw = hardwareMap.get(Servo.class, "claw");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
