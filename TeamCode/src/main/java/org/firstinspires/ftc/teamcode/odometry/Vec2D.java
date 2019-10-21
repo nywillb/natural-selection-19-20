@@ -39,6 +39,42 @@ public class Vec2D
     }
 
     /**
+     * Adds a scalar to the x component.
+     *
+     * @param xAddend can be positive or negative
+     */
+    public void addX(double xAddend) {
+        this.x += xAddend;
+    }
+
+    /**
+     * Adds a scalar to the y component.
+     *
+     * @param yAddend can be positive or negative
+     */
+    public void addY(double yAddend) {
+        this.y += yAddend;
+    }
+
+    /**
+     * Subtracts a scalar from the x component.
+     *
+     * @param xSub can be positive or negative
+     */
+    public void subX(double xSub) {
+        this.x -= xSub;
+    }
+
+    /**
+     * Subtracts a scalar to the y component.
+     *
+     * @param ySub can be positive or negative
+     */
+    public void subY(double ySub) {
+        this.y -= ySub;
+    }
+
+    /**
      * Transforms a vector to a double array, where the first element is
      * the x-component, and the second element is the y-component.
      *
