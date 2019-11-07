@@ -32,8 +32,11 @@ package org.firstinspires.ftc.teamcode.pyppyn;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -56,26 +59,17 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Time", group="Pushbot")
-@Disabled
+@Autonomous(name="Auto1", group="Pyppyn")
 public class Auto1 extends LinearOpMode {
 
-    /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-    private ElapsedTime     runtime = new ElapsedTime();
-
-
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
-
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.init(hardwareMap);
+        PyppynRobot pyppyn = new PyppynRobot(hardwareMap, telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -83,44 +77,61 @@ public class Auto1 extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        telemetry.addData("started", "started");
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+        int leftTicks = 10;
+        int rightTicks = 10;
+        double speed = 1;
 
-        // Step 1:  Drive forward for 3 seconds
-        robot.leftDrive.setPower(FORWARD_SPEED);
-        robot.rightDrive.setPower(FORWARD_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+        int frontLeftTarget = pyppyn.frontLeft.getCurrentPosition() + leftTicks;
+        int backLeftTarget = pyppyn.backLeft.getCurrentPosition() + leftTicks;
+        int frontRightTarget = pyppyn.frontRight.getCurrentPosition() - rightTicks;
+        int backRightTarget = pyppyn.backRight.getCurrentPosition() - rightTicks;
+
+        pyppyn.frontLeft.setTargetPosition(frontLeftTarget);
+        pyppyn.backLeft.setTargetPosition(backLeftTarget);
+        pyppyn.frontRight.setTargetPosition(frontRightTarget);
+        pyppyn.backRight.setTargetPosition(backRightTarget);
+
+        // Turn On RUN_TO_POSITION
+        pyppyn.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pyppyn.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pyppyn.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pyppyn.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        pyppyn.frontLeft.setPower(speed);
+        pyppyn.backLeft.setPower(speed);
+        pyppyn.frontRight.setPower(-speed);
+        pyppyn.backRight.setPower(-speed);
+
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that BOTH motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (opModeIsActive() &&
+                (pyppyn.frontLeft.isBusy() && pyppyn.backLeft.isBusy() && pyppyn.frontRight.isBusy() && pyppyn.backRight.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("status", "running");
             telemetry.update();
         }
 
-        // Step 2:  Spin right for 1.3 seconds
-        robot.leftDrive.setPower(TURN_SPEED);
-        robot.rightDrive.setPower(-TURN_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
+        // Stop all motion;
+        pyppyn.frontLeft.setPower(0);
+        pyppyn.backLeft.setPower(0);
+        pyppyn.frontRight.setPower(0);
+        pyppyn.backRight.setPower(0);
 
-        // Step 3:  Drive Backwards for 1 Second
-        robot.leftDrive.setPower(-FORWARD_SPEED);
-        robot.rightDrive.setPower(-FORWARD_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
+        // Turn off RUN_TO_POSITION
+        pyppyn.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pyppyn.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pyppyn.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pyppyn.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Step 4:  Stop and close the claw.
-        robot.leftDrive.setPower(0);
-        robot.rightDrive.setPower(0);
-        robot.leftClaw.setPosition(1.0);
-        robot.rightClaw.setPosition(0.0);
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);
+        //  sleep(250);   // optional pause after each move
     }
 }
