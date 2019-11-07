@@ -35,11 +35,11 @@ public class Pyppyn extends LinearOpMode {
                 double rightPower = Range.clip(drive - turn, pyppyn.MIN_DRIVE_SPEED, pyppyn.MAX_DRIVE_SPEED);
                 pyppyn.straightDrive(leftPower, rightPower);
             } else if ((gamepad1.right_stick_x > pyppyn.JOYSTICK_THRESHOLD) || gamepad1.right_bumper) {
-                if (gamepad1.b) pyppyn.slowRotateCounterclockwise(pyppyn.SLOW_MODE_SPIN_SPEED);
-                else pyppyn.rotateCounterclockwise(pyppyn.SPIN_SPEED);
-            } else if ((gamepad1.right_stick_x < -pyppyn.JOYSTICK_THRESHOLD) || gamepad1.left_bumper) {
-                if (gamepad1.b) pyppyn.slowRotateClockwise(pyppyn.SLOW_MODE_SPIN_SPEED);
+                if (gamepad1.right_trigger>.5) pyppyn.slowRotateClockwise(pyppyn.SLOW_MODE_SPIN_SPEED);
                 else pyppyn.rotateClockwise(pyppyn.SPIN_SPEED);
+            } else if ((gamepad1.right_stick_x < -pyppyn.JOYSTICK_THRESHOLD) || gamepad1.left_bumper) {
+                if (gamepad1.right_trigger>.5) pyppyn.slowRotateCounterclockwise(pyppyn.SLOW_MODE_SPIN_SPEED);
+                else pyppyn.rotateCounterclockwise(pyppyn.SPIN_SPEED);
             } else if (gamepad1.left_stick_x < -pyppyn.JOYSTICK_THRESHOLD || gamepad1.left_stick_x > pyppyn.JOYSTICK_THRESHOLD) {
                 pyppyn.strafeRight(gamepad1.left_stick_x);
             } else if (gamepad1.dpad_up) {
