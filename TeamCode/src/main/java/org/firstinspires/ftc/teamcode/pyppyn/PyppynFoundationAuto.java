@@ -59,11 +59,13 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Auto1", group="Pyppyn")
-public class Auto1 extends LinearOpMode {
+@Autonomous(name="PyppynFoundationAuto", group="Pyppyn")
+public class PyppynFoundationAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        ElapsedTime runtime = new ElapsedTime();
 
         /*
          * Initialize the drive system variables.
@@ -76,8 +78,6 @@ public class Auto1 extends LinearOpMode {
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        telemetry.addData("started", "started");
 
         int leftTicks = 10;
         int rightTicks = 10;
@@ -87,6 +87,9 @@ public class Auto1 extends LinearOpMode {
         int backLeftTarget = pyppyn.backLeft.getCurrentPosition() + leftTicks;
         int frontRightTarget = pyppyn.frontRight.getCurrentPosition() - rightTicks;
         int backRightTarget = pyppyn.backRight.getCurrentPosition() - rightTicks;
+
+        waitForStart();
+        telemetry.addData("started", "started");
 
         pyppyn.frontLeft.setTargetPosition(frontLeftTarget);
         pyppyn.backLeft.setTargetPosition(backLeftTarget);
@@ -106,6 +109,7 @@ public class Auto1 extends LinearOpMode {
         pyppyn.backRight.setPower(-speed);
 
 
+
         // keep looping while we are still active, and there is time left, and both motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
         // its target position, the motion will stop.  This is "safer" in the event that the robot will
@@ -115,16 +119,48 @@ public class Auto1 extends LinearOpMode {
         while (opModeIsActive() &&
                 (pyppyn.frontLeft.isBusy() && pyppyn.backLeft.isBusy() && pyppyn.frontRight.isBusy() && pyppyn.backRight.isBusy())) {
 
+            runtime.reset();
+
+            // move forwards
+            while (runtime.seconds() < 0.500) {
+                pyppyn.straightDrive(pyppyn.MAX_DRIVE_SPEED/2.0, pyppyn.MAX_DRIVE_SPEED/2.0);
+            }
+
+            runtime.reset();
+            // rotate clockwise
+            while (runtime.seconds() < 0.200) {
+                pyppyn.rotateClockwise(pyppyn.MAX_DRIVE_SPEED / 2.0);
+            }
+
+            runtime.reset();
+            // shove against foundation
+            while (runtime.seconds() < 0.500) {
+                pyppyn.strafeLeft(pyppyn.MAX_DRIVE_SPEED / 2.0);
+            }
+
+            pyppyn.stop();
+
+            runtime.reset();
+            // drop down foundation stick
+            while (runtime.seconds() < 0.300) {
+                pyppyn.foundationServo1.setPosition(0.6);
+            }
+
+            runtime.reset();
+            // drag the foundation
+            while (runtime.seconds() < 1.000) {
+                pyppyn.strafeRight(pyppyn.MAX_DRIVE_SPEED / 2.0);
+            }
+
+            pyppyn.stop();
+
             // Display it for the driver.
             telemetry.addData("status", "running");
             telemetry.update();
         }
 
-        // Stop all motion;
-        pyppyn.frontLeft.setPower(0);
-        pyppyn.backLeft.setPower(0);
-        pyppyn.frontRight.setPower(0);
-        pyppyn.backRight.setPower(0);
+        // Stop all motion
+        pyppyn.stop();
 
         // Turn off RUN_TO_POSITION
         pyppyn.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -132,6 +168,5 @@ public class Auto1 extends LinearOpMode {
         pyppyn.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pyppyn.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //  sleep(250);   // optional pause after each move
     }
 }
