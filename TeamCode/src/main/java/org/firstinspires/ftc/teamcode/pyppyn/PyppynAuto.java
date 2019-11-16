@@ -59,8 +59,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="PyppynFoundationAuto", group="Pyppyn")
-public class PyppynFoundationAuto extends LinearOpMode {
+@Autonomous(name="PyppynAuto", group="Pyppyn")
+public class PyppynAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
