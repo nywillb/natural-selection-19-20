@@ -29,10 +29,6 @@ public class PyppynRobot implements Robot {
     public static final double WHEEL_DIAMETER = 2.75;
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
-    // >0.5 is clockwise (when facing into the servo)
-    // <0.5 is counter-clockwise (when facing out of the servo)
-    public Servo foundationServo1;
-
     HardwareMap hardwareMap;
 
     public DcMotor frontLeft;
@@ -71,7 +67,6 @@ public class PyppynRobot implements Robot {
 
         clawServo = hardwareMap.get(Servo.class, "claw_servo");
 
-        foundationServo1 = hardwareMap.get(Servo.class, "foundationServo1");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -99,8 +94,6 @@ public class PyppynRobot implements Robot {
 
         clawServo.setPosition(0.62);
 
-        // make it just pause
-        foundationServo1.setPosition(0.5);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
