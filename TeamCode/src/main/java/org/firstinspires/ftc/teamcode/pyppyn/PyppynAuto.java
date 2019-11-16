@@ -30,13 +30,11 @@
 package org.firstinspires.ftc.teamcode.pyppyn;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+
 import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
-import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -123,19 +121,19 @@ public class PyppynAuto extends LinearOpMode {
 
             // move forwards
             while (runtime.seconds() < 0.500) {
-                pyppyn.straightDrive(pyppyn.MAX_DRIVE_SPEED/2.0, pyppyn.MAX_DRIVE_SPEED/2.0);
+                pyppyn.straightDrive(pyppyn.MAXIMUM_DRIVE_POWER /2.0, pyppyn.MAXIMUM_DRIVE_POWER /2.0);
             }
 
             runtime.reset();
             // rotate clockwise
             while (runtime.seconds() < 0.200) {
-                pyppyn.rotateClockwise(pyppyn.MAX_DRIVE_SPEED / 2.0);
+                pyppyn.rotateClockwise(pyppyn.MAXIMUM_DRIVE_POWER / 2.0);
             }
 
             runtime.reset();
             // shove against foundation
             while (runtime.seconds() < 0.500) {
-                pyppyn.strafeLeft(pyppyn.MAX_DRIVE_SPEED / 2.0);
+                pyppyn.strafeLeft(pyppyn.MAXIMUM_DRIVE_POWER / 2.0);
             }
 
             pyppyn.stop();
@@ -149,7 +147,7 @@ public class PyppynAuto extends LinearOpMode {
             runtime.reset();
             // drag the foundation
             while (runtime.seconds() < 1.000) {
-                pyppyn.strafeRight(pyppyn.MAX_DRIVE_SPEED / 2.0);
+                pyppyn.strafeRight(pyppyn.MAXIMUM_DRIVE_POWER / 2.0);
             }
 
             pyppyn.stop();

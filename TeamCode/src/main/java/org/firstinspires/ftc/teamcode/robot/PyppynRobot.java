@@ -17,13 +17,18 @@ public class PyppynRobot implements Robot {
 
     public static final double JOYSTICK_THRESHOLD = 0.13;
     public static final double JOYSTICK_THRESHOLD_SQUARED = Math.pow(JOYSTICK_THRESHOLD, 2);
+
     public static final double MAX_LIFT_SPEED = 0.5;
-    public static final double MAX_DRIVE_SPEED = 0.8;
-    public static final double MIN_DRIVE_SPEED = -0.8;
-    public static final double SLOW_MODE_SPEED = 0.3;
+    public static final double MAX_CLAW_SPEED = 0.3;
+
+    public static final double MAXIMUM_DRIVE_POWER = 0.8;
+    public static final double MIN_DRIVE_POWER = -MAXIMUM_DRIVE_POWER;
+    public static final double SLOW_MODE_MAX_POWER = 0.3;
+    public static final double SLOW_MODE_MIN_POWER = -SLOW_MODE_MAX_POWER;
+
     public static final double SPIN_SPEED = 0.5;
     public static final double SLOW_MODE_SPIN_SPEED = 0.3;
-    public static final double MAX_CLAW_SPEED = 0.3;
+
     public static final BNO055IMU.AngleUnit INTERNAL_ANGLE_UNIT = BNO055IMU.AngleUnit.RADIANS;
     public static final AngleUnit REPORTING_ANGLE_UNIT = AngleUnit.RADIANS;
     public static final double WHEEL_DIAMETER = 2.75;
@@ -144,11 +149,13 @@ public class PyppynRobot implements Robot {
         backRight.setPower(-power);
     }
 
+    @Deprecated
     public void slowRotateClockwise(double power) {
         frontLeft.setPower(power);
         backRight.setPower(power);
     }
 
+    @Deprecated
     public void slowRotateCounterclockwise(double power) {
         frontLeft.setPower(-power);
         backRight.setPower(-power);
@@ -188,6 +195,16 @@ public class PyppynRobot implements Robot {
 
     public void moveClaw(double power) {
         claw.setPower(power);
+    }
+
+    public void openArms()
+    {
+        claw.setPower(SLOW_MODE_MAX_POWER);
+    }
+
+    public void closeArms()
+    {
+        claw.setPower(-SLOW_MODE_MAX_POWER);
     }
 
     public void nomNomNom(double power) {
