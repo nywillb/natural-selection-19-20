@@ -23,7 +23,7 @@ public class PyppynRobot implements Robot {
 
     public static final double MAXIMUM_DRIVE_POWER = 0.8;
     public static final double MIN_DRIVE_POWER = -MAXIMUM_DRIVE_POWER;
-    public static final double SLOW_MODE_MAX_POWER = 0.3;
+    public static final double SLOW_MODE_MAX_POWER = 0.2;
     public static final double SLOW_MODE_MIN_POWER = -SLOW_MODE_MAX_POWER;
 
     public static final double SPIN_SPEED = 0.5;
