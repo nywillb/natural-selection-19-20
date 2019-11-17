@@ -141,7 +141,7 @@ public class PyppynAuto extends LinearOpMode {
             runtime.reset();
             // drop down foundation stick
             while (runtime.seconds() < 0.300) {
-                pyppyn.foundationServo1.setPosition(0.6);
+//                pyppyn.foundationServo1.setPosition(0.6);
             }
 
             runtime.reset();

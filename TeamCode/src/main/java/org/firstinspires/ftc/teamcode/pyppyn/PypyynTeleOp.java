@@ -108,14 +108,15 @@ public class PypyynTeleOp extends OpMode {
         // gamepad1 right joystick x: strafing left or right
         else if (joystickActivated(gamepad1.right_stick_x))
         {
+            double g1rightXmag = Math.abs(gamepad1.right_stick_x);
             // determine whether to rotate right or left and then rotate that way
             if (gamepad1.right_stick_x > 0)
             {
-                pyppyn.rotateClockwise(slowMode ? pyppyn.SLOW_MODE_SPIN_SPEED : pyppyn.SPIN_SPEED);
+                pyppyn.rotateClockwise(slowMode ? pyppyn.SLOW_MODE_SPIN_SPEED*g1rightXmag : pyppyn.SPIN_SPEED*g1rightXmag);
             }
             else
             {
-                pyppyn.rotateCounterclockwise(slowMode ? pyppyn.SLOW_MODE_SPIN_SPEED : pyppyn.SPIN_SPEED);
+                pyppyn.rotateCounterclockwise(slowMode ? pyppyn.SLOW_MODE_SPIN_SPEED*g1rightXmag : pyppyn.SPIN_SPEED*g1rightXmag);
             }
         }
         else if (joystickActivated(gamepad1.left_stick_x))
@@ -146,12 +147,12 @@ public class PypyynTeleOp extends OpMode {
         // intake blocks by spinning claw parts
         if (gamepad2.right_bumper)
         {
-            pyppyn.nomNomNom(pyppyn.MAXIMUM_DRIVE_POWER);
+            pyppyn.nomNomNom(-pyppyn.MAXIMUM_DRIVE_POWER);
         }
         // outtake blocks
         else if (gamepad2.left_bumper)
         {
-            pyppyn.nomNomNom(-pyppyn.MAXIMUM_DRIVE_POWER);
+            pyppyn.nomNomNom(pyppyn.MAXIMUM_DRIVE_POWER);
         }
         else
         {
@@ -159,13 +160,13 @@ public class PypyynTeleOp extends OpMode {
         }
 
         // open or retract claws
-        // left trigger closes claws
-        if (triggerActivated(gamepad2.left_trigger))
+        // going up on the dpad (but down in the code) opens claw by moving it up
+        if (gamepad2.dpad_down)
         {
             pyppyn.setClawOpen(false);
         }
-        // right trigger opens claw
-        else if (triggerActivated(gamepad2.right_trigger))
+        // going down on the dpad (but up in the code) closes claw by moving it down
+        else if (gamepad2.dpad_up)
         {
             pyppyn.setClawOpen(true);
         }
@@ -202,7 +203,7 @@ public class PypyynTeleOp extends OpMode {
             }
             else
             {
-                pyppyn.lift(pyppyn.MAXIMUM_DRIVE_POWER*Math.abs(g2leftY));
+                pyppyn.lift(-pyppyn.MAXIMUM_DRIVE_POWER*Math.abs(g2leftY));
             }
         }
         else
