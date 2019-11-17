@@ -65,6 +65,9 @@ public class PypyynTeleOp extends OpMode {
 
         pyppyn = new PyppynRobot(hardwareMap, telemetry);
 
+        // raise the claw servo on initialization
+        pyppyn.setClawOpen(true);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -144,13 +147,13 @@ public class PypyynTeleOp extends OpMode {
     public void intake()
     {
 
-        // intake blocks by spinning claw parts
-        if (gamepad2.right_bumper)
+        // gamepad2 right trigger intakes blocks
+        if (triggerActivated(gamepad2.right_trigger))
         {
             pyppyn.nomNomNom(-pyppyn.MAXIMUM_DRIVE_POWER);
         }
         // outtake blocks
-        else if (gamepad2.left_bumper)
+        else if (gamepad2.right_bumper)
         {
             pyppyn.nomNomNom(pyppyn.MAXIMUM_DRIVE_POWER);
         }
@@ -159,14 +162,13 @@ public class PypyynTeleOp extends OpMode {
             pyppyn.nomNomNom(0.0);
         }
 
-        // open or retract claws
-        // going up on the dpad (but down in the code) opens claw by moving it up
-        if (gamepad2.dpad_down)
+        // claw servo
+        // holding down left trigger closes claw, otherwise it lifts up
+        if (triggerActivated(gamepad2.left_trigger))
         {
             pyppyn.setClawOpen(false);
         }
-        // going down on the dpad (but up in the code) closes claw by moving it down
-        else if (gamepad2.dpad_up)
+        else
         {
             pyppyn.setClawOpen(true);
         }
@@ -193,6 +195,7 @@ public class PypyynTeleOp extends OpMode {
     {
         // handles the lift going up and down
         // left joystick up is lift going up, vice-versa
+        // dpad physical up is also lift up, and dpad physical down is also lift down
         if (joystickActivated(gamepad2.left_stick_y))
         {
             double g2leftY = -gamepad2.left_stick_y;
@@ -204,6 +207,18 @@ public class PypyynTeleOp extends OpMode {
             else
             {
                 pyppyn.lift(-pyppyn.MAXIMUM_DRIVE_POWER*Math.abs(g2leftY));
+            }
+        }
+        else if (gamepad2.dpad_down || gamepad2.dpad_up)
+        {
+            // the dpad physical direction we are pressing in, for up and down, is opposite in the code
+            if (gamepad2.dpad_down)
+            {
+                pyppyn.lift(pyppyn.SLOW_MODE_MAX_POWER);
+            }
+            else if (gamepad2.dpad_up)
+            {
+                pyppyn.lift(-pyppyn.SLOW_MODE_MAX_POWER);
             }
         }
         else
