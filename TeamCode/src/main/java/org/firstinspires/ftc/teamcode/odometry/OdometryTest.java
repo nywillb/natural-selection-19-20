@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp(name="OdometryTest", group="Odometry")
+@TeleOp(name="\uD83D\uDCCF Odometry Test", group="Odometry")
 public class OdometryTest extends LinearOpMode {
 
     // Declare OpMode members.
