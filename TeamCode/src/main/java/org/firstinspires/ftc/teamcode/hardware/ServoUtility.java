@@ -49,7 +49,6 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "\uD83D\uDD27 Servo Utility", group = "Utility")
-@Disabled
 public class ServoUtility extends LinearOpMode {
 
     // Define class members

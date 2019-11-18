@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.pyppyn;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -57,6 +58,7 @@ import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+@Disabled
 @Autonomous(name="PyppynAuto", group="Pyppyn")
 public class PyppynAuto extends LinearOpMode {
 

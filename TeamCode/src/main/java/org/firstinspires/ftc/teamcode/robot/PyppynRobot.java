@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,6 +35,15 @@ public class PyppynRobot implements Robot {
     public static final double WHEEL_DIAMETER = 2.75;
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
+    public abstract static class Odometry {
+        public static final double WHEEL_DIAMETER = 50.0;
+        public static final double WHEEL_DISTANCE = 83.1;
+        public static final double ROTATIONS_PER_CIRCLE = 2 * WHEEL_DIAMETER / WHEEL_DISTANCE;
+    }
+
+    LinearOpMode opMode;
+    Telemetry telemetry;
+
     HardwareMap hardwareMap;
 
     public DcMotor frontLeft;
@@ -55,6 +65,7 @@ public class PyppynRobot implements Robot {
 
     private boolean clawOpen = false;
 
+    @Deprecated
     public PyppynRobot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
 
@@ -97,8 +108,7 @@ public class PyppynRobot implements Robot {
         leftSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        clawServo.setPosition(0.62);
-
+        setClawOpen(true);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -112,6 +122,74 @@ public class PyppynRobot implements Robot {
         imu.initialize(parameters);
 
         this.introduceSelf(telemetry);
+    }
+
+    public boolean opModeIsActive() {
+        return opMode.opModeIsActive();
+    }
+
+    public void idle() {
+        opMode.idle();
+    }
+
+    public PyppynRobot(LinearOpMode opMode) {
+        this.opMode = opMode;
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
+
+        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
+        frontRight = hardwareMap.get(DcMotor.class, "front_right");
+        backLeft = hardwareMap.get(DcMotor.class, "back_left");
+        backRight = hardwareMap.get(DcMotor.class, "back_right");
+
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
+        claw = hardwareMap.get(DcMotor.class, "claw");
+
+        leftSpinner = hardwareMap.get(DcMotor.class, "left_spinner");
+        rightSpinner = hardwareMap.get(DcMotor.class, "right_spinner");
+
+        clawServo = hardwareMap.get(Servo.class, "claw_servo");
+
+
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        leftSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSpinner.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        claw.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        claw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        setClawOpen(true);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = INTERNAL_ANGLE_UNIT;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+
+        imu.initialize(parameters);
+
+        this.introduceSelf(opMode.telemetry);
     }
 
     public void calibrateIMU() throws InterruptedException {
@@ -256,141 +334,67 @@ public class PyppynRobot implements Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void moveDistance(int distance, double power) {
+        int target = frontRight.getCurrentPosition() - distance;
 
-    public void rotateXTicks(double speed, int ticks, double timeoutS, boolean opModeIsActive, Runnable doWhileRunning) {
-        // Determine new target position, and pass to motor controller
-        int frontLeftTarget = frontLeft.getCurrentPosition() + ticks;
-        int backLeftTarget = backLeft.getCurrentPosition() + ticks;
-        int frontRightTarget = frontLeft.getCurrentPosition() + ticks;
-        int backRightTarget = backLeft.getCurrentPosition() + ticks;
+        int distanceToTarget = frontRight.getCurrentPosition() - target;
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 1) {
+            distanceToTarget = frontRight.getCurrentPosition() - target;
+            int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
 
-        frontLeft.setTargetPosition(frontLeftTarget);
-        backLeft.setTargetPosition(backLeftTarget);
-        frontRight.setTargetPosition(frontRightTarget);
-        backRight.setTargetPosition(backRightTarget);
+            double factor = 1.0f;
+            if (Math.abs(distanceToTarget) > (distance / 2)) {
+                factor = 0.75f;
+            }
 
-        // Turn On RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeft.setPower(factor * negativeFactor * power);
+            backLeft.setPower(factor * negativeFactor * power);
+            frontRight.setPower(-factor * negativeFactor * power);
+            backRight.setPower(-factor * negativeFactor * power);
 
-        // reset the timeout time and start motion.
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
+            idle();
 
-        backLeft.setPower(Math.abs(speed));
-        backRight.setPower(Math.abs(speed));
-
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-
-        while (opModeIsActive && (runtime.seconds() < timeoutS) && (frontLeft.isBusy() && backLeft.isBusy() && frontRight.isBusy() && backRight.isBusy())) {
-            doWhileRunning.run();
+            telemetry.addData("Current position", frontRight.getCurrentPosition());
+            telemetry.addData("Target position", target);
+            telemetry.update();
         }
 
-        // Stop all motion;
-        stop();
-
-        // Turn off RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 
-    public void driveXTicks(double speed, int leftTicks, int rightTicks, double timeoutS, boolean opModeIsActive) {
-        // Determine new target position, and pass to motor controller
-        int frontLeftTarget = frontLeft.getCurrentPosition() + leftTicks;
-        int backLeftTarget = backLeft.getCurrentPosition() + leftTicks;
-        int frontRightTarget = frontLeft.getCurrentPosition() - rightTicks;
-        int backRightTarget = backLeft.getCurrentPosition() - rightTicks;
+    public void rotateDistance(int distance, double power) {
+        int target = frontRight.getCurrentPosition() - distance;
 
-        frontLeft.setTargetPosition(frontLeftTarget);
-        backLeft.setTargetPosition(backLeftTarget);
-        frontRight.setTargetPosition(frontRightTarget);
-        backRight.setTargetPosition(backRightTarget);
+        int distanceToTarget = frontRight.getCurrentPosition() - target;
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 1) {
+            distanceToTarget = frontRight.getCurrentPosition() - target;
+            int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
 
-        // Turn On RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            double factor = 1.0f;
+            if (Math.abs(distanceToTarget) > (distance / 2)) {
+                factor = 0.75f;
+            }
 
-        // reset the timeout time and start motion.
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
+            frontLeft.setPower(factor * negativeFactor * power);
+            backLeft.setPower(factor * negativeFactor * power);
+            frontRight.setPower(factor * negativeFactor * power);
+            backRight.setPower(factor * negativeFactor * power);
 
-        backLeft.setPower(Math.abs(speed));
-        backRight.setPower(Math.abs(speed));
+            idle();
 
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-
-        while (opModeIsActive && (runtime.seconds() < timeoutS) && (frontLeft.isBusy() && backLeft.isBusy() && frontRight.isBusy() && backRight.isBusy())) {
-
+            telemetry.addData("Current position", frontRight.getCurrentPosition());
+            telemetry.addData("Target position", target);
+            telemetry.update();
         }
 
-        // Stop all motion;
-        stop();
-
-        // Turn off RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
-
-
-    public void driveXTicks(double speed, int leftTicks, int rightTicks, double timeoutS, boolean opModeIsActive, Runnable doWhileRunning) {
-        // Determine new target position, and pass to motor controller
-        int frontLeftTarget = frontLeft.getCurrentPosition() + leftTicks;
-        int backLeftTarget = backLeft.getCurrentPosition() + leftTicks;
-        int frontRightTarget = frontLeft.getCurrentPosition() - rightTicks;
-        int backRightTarget = backLeft.getCurrentPosition() - rightTicks;
-
-        frontLeft.setTargetPosition(frontLeftTarget);
-        backLeft.setTargetPosition(backLeftTarget);
-        frontRight.setTargetPosition(frontRightTarget);
-        backRight.setTargetPosition(backRightTarget);
-
-        // Turn On RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // reset the timeout time and start motion.
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-
-        backLeft.setPower(Math.abs(speed));
-        backRight.setPower(Math.abs(speed));
-
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-
-        while (opModeIsActive && (runtime.seconds() < timeoutS) && (frontLeft.isBusy() && backLeft.isBusy() && frontRight.isBusy() && backRight.isBusy())) {
-            doWhileRunning.run();
-        }
-
-        // Stop all motion;
-        stop();
-
-        // Turn off RUN_TO_POSITION
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-
 
     @Override
     public String getName() {
