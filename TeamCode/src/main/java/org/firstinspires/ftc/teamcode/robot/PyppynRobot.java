@@ -11,6 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
+import org.json.JSONException;
 
 import static java.lang.Thread.sleep;
 
@@ -334,13 +337,16 @@ public class PyppynRobot implements Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveDistance(int distance, double power) {
+    public void moveDistance(int distance, double power, boolean correctSelf) {
         int target = frontRight.getCurrentPosition() - distance;
 
         int distanceToTarget = frontRight.getCurrentPosition() - target;
-        while (opModeIsActive() && Math.abs(distanceToTarget) > 1) {
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 10) {
             distanceToTarget = frontRight.getCurrentPosition() - target;
             int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
+            if(!correctSelf) {
+                negativeFactor = 1;
+            }
 
             double factor = 1.0f;
             if (Math.abs(distanceToTarget) > (distance / 2)) {
@@ -369,7 +375,7 @@ public class PyppynRobot implements Robot {
         int target = frontRight.getCurrentPosition() - distance;
 
         int distanceToTarget = frontRight.getCurrentPosition() - target;
-        while (opModeIsActive() && Math.abs(distanceToTarget) > 1) {
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 10) {
             distanceToTarget = frontRight.getCurrentPosition() - target;
             int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
 
@@ -378,10 +384,10 @@ public class PyppynRobot implements Robot {
                 factor = 0.75f;
             }
 
-            frontLeft.setPower(factor * negativeFactor * power);
-            backLeft.setPower(factor * negativeFactor * power);
-            frontRight.setPower(factor * negativeFactor * power);
-            backRight.setPower(factor * negativeFactor * power);
+            frontLeft.setPower(-factor * negativeFactor * power);
+            backLeft.setPower(-factor * negativeFactor * power);
+            frontRight.setPower(-factor * negativeFactor * power);
+            backRight.setPower(-factor * negativeFactor * power);
 
             idle();
 
