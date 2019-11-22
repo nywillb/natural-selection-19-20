@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pyppyn.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Alliance;
@@ -27,12 +29,10 @@ public abstract class AutonomousOperation extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
 
-        id = new IDLog("Encoder Values", MatchPhase.AUTONOMOUS, getPosition(), getAlliance());
+        id = new IDLog("IMU Values", MatchPhase.AUTONOMOUS, getPosition(), getAlliance());
 
         Alliance alliance = getAlliance();
         Position position = getPosition();
-
-        ElapsedTime runtime = new ElapsedTime();
 
         pyppyn = new PyppynRobot(this);
 
@@ -62,7 +62,11 @@ public abstract class AutonomousOperation extends LinearOpMode {
                 }
                 pyppyn.lift(0.0);
 
-                pyppyn.moveDistance(1291, 0.3, false);
+                try {
+                    pyppyn.moveDistance(1291, 0.3, false, id);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 //                pyppyn.rotateDistance(67, 0.5);
 
                 runtime.reset();
@@ -71,7 +75,23 @@ public abstract class AutonomousOperation extends LinearOpMode {
                 }
                 pyppyn.lift(0.0);
 
-                pyppyn.moveDistance(-1091, 0.5, true);
+                try {
+                    pyppyn.moveDistance(-1391, 0.5, true, id);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                runtime.reset();
+                while(runtime.seconds() <= 3) {
+                    pyppyn.lift(PyppynRobot.SLOW_MODE_MAX_POWER);
+                }
+                pyppyn.lift(0.0);
+
+                runtime.reset();
+                while (runtime.seconds() <= 3) {
+                    pyppyn.straightDrive(-0.2, -0.2);
+                }
+                pyppyn.stop();
 
 
                 break;
@@ -83,6 +103,4 @@ public abstract class AutonomousOperation extends LinearOpMode {
             e.printStackTrace();
         }
     }
-
-
 }

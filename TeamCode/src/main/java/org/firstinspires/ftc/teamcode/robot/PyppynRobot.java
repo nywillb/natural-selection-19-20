@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
+import org.firstinspires.ftc.teamcode.odometry.Angle;
 import org.json.JSONException;
 
 import static java.lang.Thread.sleep;
@@ -33,39 +34,27 @@ public class PyppynRobot implements Robot {
     public static final double SPIN_SPEED = 0.5;
     public static final double SLOW_MODE_SPIN_SPEED = 0.3;
 
+    public static final double ANGLE_ADJUSTMENT_FACTOR = 0.0;
+    public static final double ANGLE_ADJUSTMENT_THRESHOLD = 0.08;
+
     public static final BNO055IMU.AngleUnit INTERNAL_ANGLE_UNIT = BNO055IMU.AngleUnit.RADIANS;
     public static final AngleUnit REPORTING_ANGLE_UNIT = AngleUnit.RADIANS;
     public static final double WHEEL_DIAMETER = 2.75;
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
-
-    public abstract static class Odometry {
-        public static final double WHEEL_DIAMETER = 50.0;
-        public static final double WHEEL_DISTANCE = 83.1;
-        public static final double ROTATIONS_PER_CIRCLE = 2 * WHEEL_DIAMETER / WHEEL_DISTANCE;
-    }
-
-    LinearOpMode opMode;
-    Telemetry telemetry;
-
-    HardwareMap hardwareMap;
-
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
-
     public DcMotor lift;
-
     public DcMotor claw;
     public DcMotor leftSpinner;
     public DcMotor rightSpinner;
-
     public Servo clawServo;
-
     public BNO055IMU imu;
-
+    LinearOpMode opMode;
+    Telemetry telemetry;
+    HardwareMap hardwareMap;
     private double referenceAngle = 0.0;
-
     private boolean clawOpen = false;
 
     @Deprecated
@@ -117,22 +106,17 @@ public class PyppynRobot implements Robot {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.mode = BNO055IMU.SensorMode.GYRONLY;
         parameters.angleUnit = INTERNAL_ANGLE_UNIT;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
         imu.initialize(parameters);
 
         this.introduceSelf(telemetry);
-    }
-
-    public boolean opModeIsActive() {
-        return opMode.opModeIsActive();
-    }
-
-    public void idle() {
-        opMode.idle();
     }
 
     public PyppynRobot(LinearOpMode opMode) {
@@ -193,6 +177,14 @@ public class PyppynRobot implements Robot {
         imu.initialize(parameters);
 
         this.introduceSelf(opMode.telemetry);
+    }
+
+    public boolean opModeIsActive() {
+        return opMode.opModeIsActive();
+    }
+
+    public void idle() {
+        opMode.idle();
     }
 
     public void calibrateIMU() throws InterruptedException {
@@ -278,13 +270,11 @@ public class PyppynRobot implements Robot {
         claw.setPower(power);
     }
 
-    public void openArms()
-    {
+    public void openArms() {
         claw.setPower(SLOW_MODE_MAX_POWER);
     }
 
-    public void closeArms()
-    {
+    public void closeArms() {
         claw.setPower(-SLOW_MODE_MAX_POWER);
     }
 
@@ -337,26 +327,45 @@ public class PyppynRobot implements Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveDistance(int distance, double power, boolean correctSelf) {
+    public void moveDistance(int distance, double power, boolean correctSelf, IDLog id) throws JSONException {
         int target = frontRight.getCurrentPosition() - distance;
 
+        double gyroStartMeasurement = imu.getAngularOrientation().firstAngle;
+
         int distanceToTarget = frontRight.getCurrentPosition() - target;
-        while (opModeIsActive() && Math.abs(distanceToTarget) > 10) {
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 30) {
+            id.addItem(new IDLogItem("angle", imu.getAngularOrientation().firstAngle));
             distanceToTarget = frontRight.getCurrentPosition() - target;
             int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
-            if(!correctSelf) {
+            if (!correctSelf) {
                 negativeFactor = 1;
             }
 
             double factor = 1.0f;
-            if (Math.abs(distanceToTarget) > (distance / 2)) {
-                factor = 0.75f;
+//            if (Math.abs(distanceToTarget) > Math.abs(distance / 2)) {
+//                factor = 0.75f;
+//            }
+
+            double leftFactor = 1;
+            double rightFactor = 1;
+
+            id.addItem(new IDLogItem("threshold left", ANGLE_ADJUSTMENT_THRESHOLD));
+            id.addItem(new IDLogItem("threshold right", -ANGLE_ADJUSTMENT_THRESHOLD));
+
+
+            if(imu.getAngularOrientation().firstAngle - gyroStartMeasurement > ANGLE_ADJUSTMENT_THRESHOLD) {
+                leftFactor = ANGLE_ADJUSTMENT_FACTOR;
+            } else if (imu.getAngularOrientation().firstAngle - gyroStartMeasurement < -ANGLE_ADJUSTMENT_THRESHOLD) {
+                rightFactor = ANGLE_ADJUSTMENT_FACTOR;
             }
 
-            frontLeft.setPower(factor * negativeFactor * power);
-            backLeft.setPower(factor * negativeFactor * power);
-            frontRight.setPower(-factor * negativeFactor * power);
-            backRight.setPower(-factor * negativeFactor * power);
+            id.addItem(new IDLogItem("left power", factor * leftFactor * negativeFactor * power));
+            id.addItem(new IDLogItem("right power", -factor * rightFactor * negativeFactor * power));
+
+            frontLeft.setPower(factor * leftFactor * negativeFactor * power);
+            backLeft.setPower(factor * leftFactor * negativeFactor * power);
+            frontRight.setPower(-factor * rightFactor * negativeFactor * power);
+            backRight.setPower(-factor * rightFactor * negativeFactor * power);
 
             idle();
 
@@ -411,5 +420,11 @@ public class PyppynRobot implements Robot {
     public void introduceSelf(Telemetry telemetry) {
         telemetry.addData("Hello!", this.getName() + " reporting for duty!");
         telemetry.update();
+    }
+
+    public abstract static class Odometry {
+        public static final double WHEEL_DIAMETER = 50.0;
+        public static final double WHEEL_DISTANCE = 83.1;
+        public static final double ROTATIONS_PER_CIRCLE = 2 * WHEEL_DIAMETER / WHEEL_DISTANCE;
     }
 }

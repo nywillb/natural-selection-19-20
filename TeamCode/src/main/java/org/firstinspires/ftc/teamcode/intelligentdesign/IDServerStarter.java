@@ -28,7 +28,7 @@ public class IDServerStarter extends LinearOpMode {
             WifiManager wm = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
 
             // I think we're supposed to use java.net.InetAddress#getHostAddress() instead, but I need to look into that.
-            telemetry.addData("\uD83D\uDDA5 Go to", "http://" + Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress()) + ":17126");
+            telemetry.addData("\uD83D\uDDA5 Go to", "http://" + wda.getConnectionOwnerAddress().toString() + ":17126");
 
             telemetry.addLine();
 
