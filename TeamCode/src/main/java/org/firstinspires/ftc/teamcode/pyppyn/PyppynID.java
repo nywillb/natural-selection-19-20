@@ -64,6 +64,7 @@ public class PyppynID extends OpMode {
     double frontRightInitial;
     double backLeftInitial;
     double backRightInitial;
+    double liftInitial;
 
     PyppynRobot pyppyn;
 
@@ -86,7 +87,7 @@ public class PyppynID extends OpMode {
         backRightInitial = pyppyn.backRight.getCurrentPosition();
         frontLeftInitial = pyppyn.frontLeft.getCurrentPosition();
         frontRightInitial = pyppyn.frontRight.getCurrentPosition();
-
+        liftInitial = pyppyn.lift.getCurrentPosition();
     }
 
     /*
@@ -269,7 +270,7 @@ public class PyppynID extends OpMode {
             id.addItem(new IDLogItem("backRight", pyppyn.backRight.getCurrentPosition() - backRightInitial));
             id.addItem(new IDLogItem("frontLeft", pyppyn.frontLeft.getCurrentPosition() - frontLeftInitial));
             id.addItem(new IDLogItem("frontRight", pyppyn.frontRight.getCurrentPosition() - frontRightInitial));
-
+            id.addItem(new IDLogItem("lift", pyppyn.lift.getCurrentPosition() - liftInitial));
         } catch (JSONException e) {
             e.printStackTrace();
         } }

@@ -35,7 +35,7 @@ public class PyppynRobot implements Robot {
     public static final double SLOW_MODE_SPIN_SPEED = 0.3;
 
     public static final double ANGLE_ADJUSTMENT_FACTOR = 0.0;
-    public static final double ANGLE_ADJUSTMENT_THRESHOLD = 0.08;
+    public static final double ANGLE_ADJUSTMENT_THRESHOLD = 0.3;
 
     public static final BNO055IMU.AngleUnit INTERNAL_ANGLE_UNIT = BNO055IMU.AngleUnit.RADIANS;
     public static final AngleUnit REPORTING_ANGLE_UNIT = AngleUnit.RADIANS;
@@ -349,14 +349,10 @@ public class PyppynRobot implements Robot {
             double leftFactor = 1;
             double rightFactor = 1;
 
-            id.addItem(new IDLogItem("threshold left", ANGLE_ADJUSTMENT_THRESHOLD));
-            id.addItem(new IDLogItem("threshold right", -ANGLE_ADJUSTMENT_THRESHOLD));
-
-
             if(imu.getAngularOrientation().firstAngle - gyroStartMeasurement > ANGLE_ADJUSTMENT_THRESHOLD) {
-                leftFactor = ANGLE_ADJUSTMENT_FACTOR;
-            } else if (imu.getAngularOrientation().firstAngle - gyroStartMeasurement < -ANGLE_ADJUSTMENT_THRESHOLD) {
                 rightFactor = ANGLE_ADJUSTMENT_FACTOR;
+            } else if (imu.getAngularOrientation().firstAngle - gyroStartMeasurement < -ANGLE_ADJUSTMENT_THRESHOLD) {
+                leftFactor = ANGLE_ADJUSTMENT_FACTOR;
             }
 
             id.addItem(new IDLogItem("left power", factor * leftFactor * negativeFactor * power));
@@ -379,6 +375,37 @@ public class PyppynRobot implements Robot {
         backLeft.setPower(0);
         backRight.setPower(0);
     }
+
+    public void liftDistance(int distance, double power) {
+        int target = lift.getCurrentPosition() - distance;
+        int distanceToTarget = lift.getCurrentPosition() - target;
+
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 30) {
+            distanceToTarget = lift.getCurrentPosition() - target;
+
+            double factor = -1.0f;
+
+            if (Math.abs(distanceToTarget) > Math.abs(distance / 2)) {
+                factor = -0.75f;
+            }
+
+            if(distanceToTarget < 0) {
+                factor *= -1;
+            }
+
+            lift.setPower(factor * power);
+
+            idle();
+
+            telemetry.addData("distanceToTarget", distanceToTarget);
+            telemetry.addData("target", target);
+            telemetry.addData("current", lift.getCurrentPosition());
+            telemetry.update();
+        }
+
+        lift.setPower(0);
+    }
+
 
     public void rotateDistance(int distance, double power) {
         int target = frontRight.getCurrentPosition() - distance;
