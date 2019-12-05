@@ -41,8 +41,12 @@ public abstract class AutonomousOperation extends LinearOpMode {
 
             telemetry.update();
 
+
+
             waitForStart();
             id.startMatch();
+
+//            pyppyn.rotateDistance(360, .7);
 
             if (position == BUILDING_ZONE) {
                 while (opModeIsActive()) {
@@ -58,18 +62,24 @@ public abstract class AutonomousOperation extends LinearOpMode {
                     pyppyn.liftDistance(-300, 0.5);
                     runtime.reset();
                     if(alliance == Alliance.RED) {
-                        while(runtime.seconds() < 4) {
+                        while(runtime.seconds() < 0.3) {
                             pyppyn.strafeRight(0.5);
                         }
+                        runtime.reset();
+                        while(runtime.seconds() < 1) {
+                            pyppyn.straightDrive(-0.8, -0.5);
+                        }
                     } else if(alliance == Alliance.BLUE) {
-                        while(runtime.seconds() < 4) {
+                        while(runtime.seconds() < 0.3) {
                             pyppyn.strafeLeft(0.5);
+                        }
+//                        pyppyn.rotateDistance(350, 1);
+                        runtime.reset();
+                        while(runtime.seconds() < 2.4) {
+                            pyppyn.straightDrive(-0.5, -0.5);
                         }
                     }
 
-                    while(runtime.seconds() < 5) {
-                        pyppyn.straightDrive(-5, -0.5);
-                    }
 
 //                    runtime.reset();
 //                    if(alliance == Alliance.RED) {
