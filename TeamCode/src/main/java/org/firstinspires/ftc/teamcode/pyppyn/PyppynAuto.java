@@ -134,7 +134,7 @@ public class PyppynAuto extends LinearOpMode {
 
             runtime.reset();
             // shove against foundation
-            while (runtime.seconds() < 0.500) {
+            while (runtime.seconds() < 0.580) {
                 pyppyn.strafeLeft(pyppyn.MAXIMUM_DRIVE_POWER / 2.0);
             }
 

@@ -57,18 +57,39 @@ public abstract class AutonomousOperation extends LinearOpMode {
 
                     pyppyn.liftDistance(400, 0.5);
 
-                    pyppyn.moveDistance(1400, 0.3, false, id);
+                    pyppyn.moveDistance(1500, 0.3, false, id);
 
-                    pyppyn.liftDistance(-300, 0.5);
-                    runtime.reset();
+                    pyppyn.liftDistance(-400, 0.5);
                     if(alliance == Alliance.RED) {
-                        while(runtime.seconds() < 0.3) {
-                            pyppyn.strafeRight(0.5);
+                        runtime.reset();
+//                        while(runtime.seconds() < 1.0) {
+//                            pyppyn.strafeLeft(pyppyn.SLOW_MODE_MAX_POWER+0.2);
+//                        }
+//                        runtime.reset();
+//                        while(runtime.seconds() < 1.0) {
+//                            pyppyn.straightDrive(-0.5, -0.6);
+//                        }
+                        pyppyn.moveDistance(-625, 0.3, true, id);
+                        pyppyn.liftDistance(400, 0.5);
+                        while(runtime.seconds() < 1.00) {
+                            pyppyn.straightDrive(0.6, 0.6);
                         }
                         runtime.reset();
-                        while(runtime.seconds() < 1) {
-                            pyppyn.straightDrive(-0.8, -0.5);
+                        while(runtime.seconds() < 1.0) {
+                            pyppyn.straightDrive(-pyppyn.SLOW_MODE_MAX_POWER, -pyppyn.SLOW_MODE_MAX_POWER);
                         }
+//                        runtime.reset();
+//                        while(runtime.seconds() < 0.5) {
+//                            pyppyn.straightDrive(-0.6, -0.4);
+//                        }
+//                        runtime.reset();
+//                        while(runtime.seconds() < 1.0) {
+//                            pyppyn.strafeRight(pyppyn.SLOW_MODE_MAX_POWER+0.2);
+//                        }
+//                        runtime.reset();
+//                        while(runtime.seconds() < 0.5) {
+//                            pyppyn.straightDrive(-0.4, -0.6);
+//                        }
                     } else if(alliance == Alliance.BLUE) {
                         while(runtime.seconds() < 0.3) {
                             pyppyn.strafeLeft(0.5);
