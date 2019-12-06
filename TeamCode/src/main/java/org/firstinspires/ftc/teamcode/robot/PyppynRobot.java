@@ -327,13 +327,13 @@ public class PyppynRobot implements Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveDistance(int distance, double power, boolean correctSelf, IDLog id) throws JSONException {
+    public void moveDistance(int distance, double power, boolean correctSelf, IDLog id, double timeout, ElapsedTime time) throws JSONException {
         int target = frontRight.getCurrentPosition() - distance;
 
         double gyroStartMeasurement = imu.getAngularOrientation().firstAngle;
 
         int distanceToTarget = frontRight.getCurrentPosition() - target;
-        while (opModeIsActive() && Math.abs(distanceToTarget) > 30) {
+        while (opModeIsActive() && Math.abs(distanceToTarget) > 30 && time.seconds() < timeout) {
             id.addItem(new IDLogItem("angle", imu.getAngularOrientation().firstAngle));
             distanceToTarget = frontRight.getCurrentPosition() - target;
             int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
