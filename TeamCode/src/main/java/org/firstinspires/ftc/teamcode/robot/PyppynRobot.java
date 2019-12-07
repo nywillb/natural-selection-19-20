@@ -35,7 +35,7 @@ public class PyppynRobot implements Robot {
     public static final double SLOW_MODE_SPIN_SPEED = 0.3;
 
     public static final double ANGLE_ADJUSTMENT_FACTOR = 0.0;
-    public static final double ANGLE_ADJUSTMENT_THRESHOLD = 0.3;
+    public static final double ANGLE_ADJUSTMENT_THRESHOLD = 0.15;
 
     public static final BNO055IMU.AngleUnit INTERNAL_ANGLE_UNIT = BNO055IMU.AngleUnit.RADIANS;
     public static final AngleUnit REPORTING_ANGLE_UNIT = AngleUnit.RADIANS;
