@@ -63,7 +63,7 @@ public abstract class AutonomousOperation extends LinearOpMode {
                     pyppyn.liftDistance(-400, 0.5);
                     if(alliance == Alliance.RED) {
                         runtime.reset();
-                        pyppyn.moveDistance(-600, 0.8, true, id, 7, runtime);
+                        pyppyn.moveDistance(-550, 0.8, true, id, 7, runtime);
                         pyppyn.liftDistance(400, 0.5);
                         while(runtime.seconds() < 1.00) {
                             pyppyn.straightDrive(0.6, 0.6);
