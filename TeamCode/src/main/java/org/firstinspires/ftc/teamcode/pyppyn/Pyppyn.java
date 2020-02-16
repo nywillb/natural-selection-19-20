@@ -49,7 +49,7 @@ import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "\uD83D\uDD04 Pyppyn", group = "Pyppyn")
+@TeleOp(name = "\uD83D\uDD04 Pyppyn", group = "1")
 public class Pyppyn extends OpMode {
 
     public ElapsedTime runtime = new ElapsedTime();
@@ -237,15 +237,25 @@ public class Pyppyn extends OpMode {
         return trigger > 0.5;
     }
 
+    public void capstone() {
+        if(gamepad2.x) {
+            pyppyn.setCapstoneJettison(true);
+        } else if(gamepad2.y) {
+            pyppyn.setCapstoneJettison(false);
+        }
+    }
+
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-        boolean drivingSlowMode = gamepad1.left_bumper;
-        drive(drivingSlowMode);
+        boolean isSlowMode = gamepad1.left_bumper;
+        drive(isSlowMode);
         intake();
         lift();
+        capstone();
+        telemetry.addData("Capstone Jettisoned", pyppyn.isCapstoneJettisoned());
     }
 
     /*

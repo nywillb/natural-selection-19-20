@@ -50,12 +50,14 @@ public class PyppynRobot implements Robot {
     public DcMotor leftSpinner;
     public DcMotor rightSpinner;
     public Servo clawServo;
+    public Servo capstone;
     public BNO055IMU imu;
     LinearOpMode opMode;
     Telemetry telemetry;
     HardwareMap hardwareMap;
     private double referenceAngle = 0.0;
     private boolean clawOpen = false;
+    private boolean capstoneJettison = false;
 
     @Deprecated
     public PyppynRobot(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -74,6 +76,7 @@ public class PyppynRobot implements Robot {
         rightSpinner = hardwareMap.get(DcMotor.class, "right_spinner");
 
         clawServo = hardwareMap.get(Servo.class, "claw_servo");
+        capstone = hardwareMap.get(Servo.class, "capstone");
 
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -137,6 +140,7 @@ public class PyppynRobot implements Robot {
         rightSpinner = hardwareMap.get(DcMotor.class, "right_spinner");
 
         clawServo = hardwareMap.get(Servo.class, "claw_servo");
+        capstone = hardwareMap.get(Servo.class, "capstone");
 
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -164,6 +168,7 @@ public class PyppynRobot implements Robot {
         rightSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         setClawOpen(true);
+        setCapstoneJettison(false);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -198,6 +203,8 @@ public class PyppynRobot implements Robot {
         return clawOpen;
     }
 
+    public boolean isCapstoneJettisoned() { return capstoneJettison; }
+
     public void setClawOpen(boolean clawOpen) {
         if (clawOpen) {
             clawServo.setPosition(0.92);
@@ -206,6 +213,16 @@ public class PyppynRobot implements Robot {
         }
 
         this.clawOpen = clawOpen;
+    }
+
+    public void setCapstoneJettison(boolean capstoneJettison) {
+        if (capstoneJettison) {
+            capstone.setPosition(0.39);
+        } else {
+            capstone.setPosition(0);
+        }
+
+        this.capstoneJettison = capstoneJettison;
     }
 
     public void rotateClockwise(double power) {
