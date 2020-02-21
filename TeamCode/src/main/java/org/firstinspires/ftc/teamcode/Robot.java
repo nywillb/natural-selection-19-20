@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * Robot is an interface that implements a robot
  */
+@Deprecated
 public interface Robot {
     /**
      * Each robot has a name, this function returns the name

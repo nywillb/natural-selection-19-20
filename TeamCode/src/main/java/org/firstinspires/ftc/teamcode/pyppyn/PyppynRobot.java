@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.pyppyn;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
-import org.firstinspires.ftc.teamcode.odometry.Angle;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.json.JSONException;
 
 import static java.lang.Thread.sleep;

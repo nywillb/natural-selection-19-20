@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
-import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
 import org.json.JSONException;
 
 import java.io.IOException;

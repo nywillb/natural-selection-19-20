@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.Alliance;
 import org.firstinspires.ftc.teamcode.Position;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
-import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
+import org.firstinspires.ftc.teamcode.pyppyn.PyppynRobot;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public abstract class AutonomousOperation extends LinearOpMode {
                     if(alliance == Alliance.RED) {
                         runtime.reset();
                         pyppyn.moveDistance(-550, 0.8, true, id, 7, runtime);
-                        pyppyn.liftDistance(400, 0.5);
+                        pyppyn.liftDistance(800, 0.5);
                         while(runtime.seconds() < 1.00) {
                             pyppyn.straightDrive(0.6, 0.6);
                         }

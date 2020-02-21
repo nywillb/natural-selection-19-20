@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.pyppyn.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.Alliance;
-import org.firstinspires.ftc.teamcode.Position;
 import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
-import org.firstinspires.ftc.teamcode.robot.PyppynRobot;
+import org.firstinspires.ftc.teamcode.pyppyn.PyppynRobot;
 import org.json.JSONException;
 
 @Autonomous(name="⬆️️ Drive Straight Auto")
