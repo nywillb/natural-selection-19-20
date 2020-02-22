@@ -204,11 +204,17 @@ public class Vyncynt {
         double distanceToY = y - getYCoordinate();
 
         double distance = Math.hypot(distanceToX, distanceToY);
+        double originalDistance = distance;
 
         while(opMode.opModeIsActive() && Math.abs(distance) > Math.abs(marginOfError)) {
             double angleToMoveAt = Math.toDegrees(Math.atan2(distanceToX, distanceToY));
             rotateToAngle(angleToMoveAt, DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR, power, opMode);
-            straightDrive(power, power);
+            if(Math.abs(distance) < Math.abs(0.15*originalDistance)) {
+                straightDrive(0.5*power, 0.5*power);
+            } else {
+                straightDrive(power, power);
+            }
+            distance = Math.hypot(distanceToX, distanceToY);
         }
 
         stop();
