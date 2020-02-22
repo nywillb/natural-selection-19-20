@@ -186,6 +186,8 @@ public class Vyncynt {
                 rotateClockwise(power);
             }
         }
+
+        stop();
     }
 
     public void driveToPosition(double x, double y, double power, double marginOfError, LinearOpMode opMode) {
@@ -199,6 +201,8 @@ public class Vyncynt {
             rotateToAngle(angleToMoveAt, DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR, power, opMode);
             straightDrive(power, power);
         }
+
+        stop();
     }
 
     private double calculateAngularDistance(double angle1, double angle2) {
