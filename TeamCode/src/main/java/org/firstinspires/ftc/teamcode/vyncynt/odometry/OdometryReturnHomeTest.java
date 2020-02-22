@@ -25,5 +25,7 @@ public class OdometryReturnHomeTest extends LinearOpMode {
             vyncynt.driveToPosition(0, 0, 0.5, 1, this);
             vyncynt.rotateToAngle(0, 10, 0.5, this);
         }
+
+        vyncynt.stop();
     }
 }

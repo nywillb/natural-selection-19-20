@@ -19,5 +19,7 @@ public class OdometrySquareTest extends LinearOpMode {
             vyncynt.driveToPosition(24, 24, 0.5, 2, this);
             vyncynt.driveToPosition(0, 24, 0.5, 2, this);
         }
+
+        vyncynt.stop();
     }
 }
