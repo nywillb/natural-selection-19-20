@@ -188,7 +188,7 @@ public class Vyncynt {
         }
     }
 
-    public void driveToPosition(double x, double y, double theta, double power, double marginOfError, LinearOpMode opMode) {
+    public void driveToPosition(double x, double y, double power, double marginOfError, LinearOpMode opMode) {
         double distanceToX = x - getXCoordinate();
         double distanceToY = y - getYCoordinate();
 
