@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.vyncynt;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.vyncynt.odometry.OdometryPosition;
 
 public class Vyncynt {
     // Odometry constants
@@ -9,6 +12,8 @@ public class Vyncynt {
     public static final double ODOMETRY_WHEEL_CIRCUMFERENCE = ODOMETRY_WHEEL_DIAMETER * Math.PI;
     public static final double TICKS_PER_ODOMETER_ROTATION = 200.0;
     public static final double ODOMETER_TICKS_PER_INCH = TICKS_PER_ODOMETER_ROTATION / ODOMETRY_WHEEL_CIRCUMFERENCE;
+    public static final int ODOMETRY_POSITION_SLEEP_DELAY = 100;
+    public static final double DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR = 10;
 
     // Drive constants
     public static final double MAXIMUM_DRIVE_POWER = 0.8;
@@ -39,6 +44,9 @@ public class Vyncynt {
     Servo brPlatform;
 
     NormalizedColorSensor colorSensor;
+
+    OdometryPosition op;
+    Thread opThread;
 
     public Vyncynt(HardwareMap hardwareMap, Telemetry telemetry) {
         telemetry.addData("Status", "Initializing");
@@ -88,6 +96,9 @@ public class Vyncynt {
 //        brPlatform = hardwareMap.get(Servo.class, "brPlatform");
 
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+
+        op = new OdometryPosition(fl, fr, bl, ODOMETER_TICKS_PER_INCH, ODOMETRY_POSITION_SLEEP_DELAY);
+        opThread = new Thread(op);
 
         telemetry.addData("Status", "Vyncynt reporting for duty!");
         telemetry.update();
@@ -142,5 +153,61 @@ public class Vyncynt {
         bl.setPower(0);
         fr.setPower(0);
         br.setPower(0);
+    }
+
+    public void stopOdometry() {
+        op.stop();
+    }
+
+    public double getXCoordinate() {
+        return op.returnXCoordinate();
+    }
+
+    public double getYCoordinate() {
+        return op.returnYCoordinate();
+    }
+
+    public double getOrientation() {
+        return op.returnOrientation();
+    }
+
+    public void rotateToAngle(double theta, double marginOfError, double power, LinearOpMode opMode) {
+        double dist = calculateAngularDistance(theta, marginOfError);
+        double originalDist = dist;
+        while (opMode.opModeIsActive() && Math.abs(dist) < marginOfError) {
+            dist = calculateAngularDistance(theta, marginOfError);
+            if(dist < 0 && dist > 0.15 * originalDist) {
+                rotateCounterclockwise(0.5*power);
+            } else if (dist < 0 ) {
+                rotateCounterclockwise(power);
+            } else if (dist < 0.15 * originalDist) {
+                rotateCounterclockwise(0.5*power);
+            } else {
+                rotateClockwise(power);
+            }
+        }
+    }
+
+    public void driveToPosition(double x, double y, double theta, double power, double marginOfError, LinearOpMode opMode) {
+        double distanceToX = x - getXCoordinate();
+        double distanceToY = y - getYCoordinate();
+
+        double distance = Math.hypot(distanceToX, distanceToY);
+
+        while(opMode.opModeIsActive() && Math.abs(distance) > Math.abs(marginOfError)) {
+            double angleToMoveAt = Math.toDegrees(Math.atan2(distanceToX, distanceToY));
+            rotateToAngle(angleToMoveAt, DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR, power, opMode);
+            straightDrive(power, power);
+        }
+    }
+
+    private double calculateAngularDistance(double angle1, double angle2) {
+        double a = angle1 - angle2;
+        a = floorMod((a + 180), 360 - 180);
+        return a;
+    }
+
+    private double floorMod(double a, double n) {
+        return (a % n + n) % n;
     }
 }
