@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.vyncynt;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Util;
 import org.firstinspires.ftc.teamcode.vyncynt.odometry.OdometryPosition;
 
 public class Vyncynt {
@@ -181,10 +181,10 @@ public class Vyncynt {
     }
 
     public void rotateToAngle(double theta, double marginOfError, double power, LinearOpMode opMode) {
-        double dist = calculateAngularDistance(theta, marginOfError);
+        double dist = Util.calculateAngularDistance(theta, marginOfError);
         double originalDist = dist;
         while (opMode.opModeIsActive() && Math.abs(dist) < marginOfError) {
-            dist = calculateAngularDistance(theta, marginOfError);
+            dist = Util.calculateAngularDistance(theta, marginOfError);
             if(dist < 0 && dist > 0.15 * originalDist) {
                 rotateCounterclockwise(0.5*power);
             } else if (dist < 0 ) {
@@ -218,15 +218,5 @@ public class Vyncynt {
         }
 
         stop();
-    }
-
-    private double calculateAngularDistance(double angle1, double angle2) {
-        double a = angle1 - angle2;
-        a = floorMod((a + 180), 360 - 180);
-        return a;
-    }
-
-    private double floorMod(double a, double n) {
-        return (a % n + n) % n;
     }
 }
