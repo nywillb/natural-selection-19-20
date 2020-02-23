@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class IDWebServer extends NanoHTTPD {
     @SuppressLint("SdCardPath")
@@ -26,7 +25,7 @@ public class IDWebServer extends NanoHTTPD {
 
     public Response listLogs() {
         JSONArray logs = new JSONArray();
-        File basePath = IDLog.BASE_PATH_FILE;
+        File basePath = IntelligentDesign.BASE_PATH_FILE;
 
         String[] logFiles = basePath.list();
         for(String logFile : logFiles) {
@@ -36,7 +35,7 @@ public class IDWebServer extends NanoHTTPD {
     }
 
     public Response getLog(String file) {
-        File log = new File(IDLog.BASE_PATH, file);
+        File log = new File(IntelligentDesign.BASE_PATH, file);
         if(!log.exists()) {
             return newFixedLengthResponse(Response.Status.NOT_FOUND, "application/json", makeErrorResponse("log not found"));
         }

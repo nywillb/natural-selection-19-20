@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Alliance;
 import org.firstinspires.ftc.teamcode.Position;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IntelligentDesign;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
 import org.firstinspires.ftc.teamcode.pyppyn.PyppynRobot;
 import org.json.JSONException;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import static org.firstinspires.ftc.teamcode.Position.BUILDING_ZONE;
 
 public abstract class AutonomousOperation extends LinearOpMode {
-    IDLog id;
+    IntelligentDesign id;
     private ElapsedTime runtime = new ElapsedTime();
     private PyppynRobot pyppyn;
 
@@ -23,12 +23,12 @@ public abstract class AutonomousOperation extends LinearOpMode {
     public abstract Position getPosition();
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         try {
             telemetry.addData("Status", "Initializing...");
             telemetry.update();
 
-            id = new IDLog("IMU Values", MatchPhase.AUTONOMOUS, getPosition(), getAlliance());
+            id = new IntelligentDesign("IMU Values", MatchPhase.AUTONOMOUS, getPosition(), getAlliance());
 
             Alliance alliance = getAlliance();
             Position position = getPosition();
@@ -49,7 +49,6 @@ public abstract class AutonomousOperation extends LinearOpMode {
 //            pyppyn.rotateDistance(360, .7);
 
             if (position == BUILDING_ZONE) {
-                while (opModeIsActive()) {
                     telemetry.addData("Status", "Running auto!");
                     telemetry.update();
 
@@ -134,8 +133,6 @@ public abstract class AutonomousOperation extends LinearOpMode {
 //                pyppyn.stop();
 //
 //
-                    break;
-                }
             }
             id.close();
         } catch (IOException | JSONException e) {

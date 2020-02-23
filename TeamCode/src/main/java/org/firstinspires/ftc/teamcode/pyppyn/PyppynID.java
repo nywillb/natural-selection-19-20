@@ -33,8 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IntelligentDesign;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IDItem;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
 import org.json.JSONException;
 
@@ -57,7 +57,7 @@ import java.io.IOException;
 public class PyppynID extends OpMode {
 
     public ElapsedTime runtime = new ElapsedTime();
-    public IDLog id = new IDLog("Encoder Values", MatchPhase.TELEOP);
+    public IntelligentDesign id = new IntelligentDesign("Encoder Values", MatchPhase.TELEOP);
 
     double frontLeftInitial;
     double frontRightInitial;
@@ -265,11 +265,11 @@ public class PyppynID extends OpMode {
         lift();
 
         try {
-            id.addItem(new IDLogItem("backLeft", pyppyn.backLeft.getCurrentPosition() - backLeftInitial));
-            id.addItem(new IDLogItem("backRight", pyppyn.backRight.getCurrentPosition() - backRightInitial));
-            id.addItem(new IDLogItem("frontLeft", pyppyn.frontLeft.getCurrentPosition() - frontLeftInitial));
-            id.addItem(new IDLogItem("frontRight", pyppyn.frontRight.getCurrentPosition() - frontRightInitial));
-            id.addItem(new IDLogItem("lift", pyppyn.lift.getCurrentPosition() - liftInitial));
+            id.addItem(new IDItem("backLeft", pyppyn.backLeft.getCurrentPosition() - backLeftInitial));
+            id.addItem(new IDItem("backRight", pyppyn.backRight.getCurrentPosition() - backRightInitial));
+            id.addItem(new IDItem("frontLeft", pyppyn.frontLeft.getCurrentPosition() - frontLeftInitial));
+            id.addItem(new IDItem("frontRight", pyppyn.frontRight.getCurrentPosition() - frontRightInitial));
+            id.addItem(new IDItem("lift", pyppyn.lift.getCurrentPosition() - liftInitial));
         } catch (JSONException e) {
             e.printStackTrace();
         } }

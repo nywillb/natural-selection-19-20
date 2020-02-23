@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 
-public class IDLog implements AutoCloseable {
+public class IntelligentDesign implements AutoCloseable {
     @SuppressLint("SdCardPath")
     public static final String BASE_PATH = "/sdcard/intelligentdesign/logs";
     public static final File BASE_PATH_FILE = new File(BASE_PATH);
@@ -19,19 +19,19 @@ public class IDLog implements AutoCloseable {
 
     private JSONArray logItems = new JSONArray();
 
-    public IDLog(String label, MatchPhase phase) {
+    public IntelligentDesign(String label, MatchPhase phase) {
         matchDetails = new IDMatchDetails(phase, null, null, label);
     }
 
-    public IDLog(String label, MatchPhase phase, Position position, Alliance alliance) {
+    public IntelligentDesign(String label, MatchPhase phase, Position position, Alliance alliance) {
         matchDetails = new IDMatchDetails(phase, position, alliance, label);
     }
 
     public void startMatch() {
-        matchDetails.start();;
+        matchDetails.start();
     }
 
-    public void addItem(IDLogItem item) throws JSONException {
+    public void addItem(IDItem item) throws JSONException {
         logItems.put(item.toJSON());
     }
 

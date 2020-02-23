@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLogItem;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IntelligentDesign;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IDItem;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.json.JSONException;
 
@@ -344,14 +344,14 @@ public class PyppynRobot implements Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveDistance(int distance, double power, boolean correctSelf, IDLog id, double timeout, ElapsedTime time) throws JSONException {
+    public void moveDistance(int distance, double power, boolean correctSelf, IntelligentDesign id, double timeout, ElapsedTime time) throws JSONException {
         int target = frontRight.getCurrentPosition() - distance;
 
         double gyroStartMeasurement = imu.getAngularOrientation().firstAngle;
 
         int distanceToTarget = frontRight.getCurrentPosition() - target;
         while (opModeIsActive() && Math.abs(distanceToTarget) > 30 && time.seconds() < timeout) {
-            id.addItem(new IDLogItem("angle", imu.getAngularOrientation().firstAngle));
+            id.addItem(new IDItem("angle", imu.getAngularOrientation().firstAngle));
             distanceToTarget = frontRight.getCurrentPosition() - target;
             int negativeFactor = (distanceToTarget > 0 ? 1 : -1);
             if (!correctSelf) {
@@ -372,8 +372,8 @@ public class PyppynRobot implements Robot {
                 leftFactor = ANGLE_ADJUSTMENT_FACTOR;
             }
 
-            id.addItem(new IDLogItem("left power", factor * leftFactor * negativeFactor * power));
-            id.addItem(new IDLogItem("right power", -factor * rightFactor * negativeFactor * power));
+            id.addItem(new IDItem("left power", factor * leftFactor * negativeFactor * power));
+            id.addItem(new IDItem("right power", -factor * rightFactor * negativeFactor * power));
 
             frontLeft.setPower(factor * leftFactor * negativeFactor * power);
             backLeft.setPower(factor * leftFactor * negativeFactor * power);

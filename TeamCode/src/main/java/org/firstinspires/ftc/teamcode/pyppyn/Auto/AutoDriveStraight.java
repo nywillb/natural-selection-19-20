@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.pyppyn.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.intelligentdesign.IDLog;
+import org.firstinspires.ftc.teamcode.intelligentdesign.IntelligentDesign;
 import org.firstinspires.ftc.teamcode.intelligentdesign.MatchPhase;
 import org.firstinspires.ftc.teamcode.pyppyn.PyppynRobot;
 import org.json.JSONException;
@@ -16,14 +16,14 @@ public class AutoDriveStraight extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         pyppyn = new PyppynRobot(this);
         time = new ElapsedTime();
 
         waitForStart();
         time.reset();
         try {
-            pyppyn.moveDistance(200, 0.5, true, new IDLog("Fake ID", MatchPhase.AUTONOMOUS), 5, time);
+            pyppyn.moveDistance(200, 0.5, true, new IntelligentDesign("Fake ID", MatchPhase.AUTONOMOUS), 5, time);
         } catch (JSONException e) {
             e.printStackTrace   ();
         }

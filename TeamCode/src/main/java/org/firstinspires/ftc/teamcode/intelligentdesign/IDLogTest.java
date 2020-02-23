@@ -12,22 +12,22 @@ import java.util.Random;
 @TeleOp(name = "⚙️ Intelligent Design Test")
 public class IDLogTest extends LinearOpMode {
     @Override
-    public void runOpMode() throws InterruptedException {
-        IDLog id1 = new IDLog("Log test 1", MatchPhase.AUTONOMOUS, Position.BUILDING_ZONE, Alliance.RED);
+    public void runOpMode() {
+        IntelligentDesign id1 = new IntelligentDesign("Log test 1", MatchPhase.AUTONOMOUS, Position.BUILDING_ZONE, Alliance.RED);
         id1.startMatch();
         PopulateLog(id1);
 
-        IDLog id2 = new IDLog("Log test 2", MatchPhase.TELEOP, Position.LOADING_ZONE, Alliance.BLUE);
+        IntelligentDesign id2 = new IntelligentDesign("Log test 2", MatchPhase.TELEOP, Position.LOADING_ZONE, Alliance.BLUE);
         id2.startMatch();
         PopulateLog(id2);
     }
 
-    private void PopulateLog(IDLog id) {
+    private void PopulateLog(IntelligentDesign id) {
         Random gen = new Random();
 
         for (int i = 0; i < 100; i++) {
             try {
-                id.addItem(new IDLogItem("test", gen.nextInt(100)));
+                id.addItem(new IDItem("test", gen.nextInt(100)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
