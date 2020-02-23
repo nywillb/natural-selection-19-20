@@ -29,19 +29,19 @@ public class Vyncynt {
     // Lift constants
     public static final double LIFT_SPEED = 0.7;
 
-    DcMotor fl;
-    DcMotor fr;
-    DcMotor bl;
-    DcMotor br;
-    DcMotor lift;
-    DcMotor intakeL;
-    DcMotor intakeR;
+    public DcMotor fl;
+    public DcMotor fr;
+    public DcMotor bl;
+    public DcMotor br;
+    public DcMotor lift;
+    public DcMotor intakeL;
+    public DcMotor intakeR;
 
-    Servo intakeServo;
-    Servo flPlatform;
-    Servo blPlatform;
-    Servo frPlatform;
-    Servo brPlatform;
+    public Servo intakeServo;
+    public Servo flPlatform;
+    public Servo blPlatform;
+    public Servo frPlatform;
+    public Servo brPlatform;
 
     NormalizedColorSensor colorSensor;
 
