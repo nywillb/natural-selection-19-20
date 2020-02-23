@@ -27,7 +27,7 @@ public class Vyncynt {
     public static final double REVERSE_NOM_SPEED = -0.5;
 
     // Lift constants
-    public static final double LIFT_SPEED = 0.3;
+    public static final double LIFT_SPEED = 0.7;
 
     DcMotor fl;
     DcMotor fr;
