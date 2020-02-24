@@ -12,7 +12,7 @@ public class Vyncynt {
     public static final double ODOMETRY_WHEEL_CIRCUMFERENCE = ODOMETRY_WHEEL_DIAMETER * Math.PI;
     public static final double TICKS_PER_ODOMETER_ROTATION = 200.0;
     public static final double ODOMETER_TICKS_PER_INCH = TICKS_PER_ODOMETER_ROTATION / ODOMETRY_WHEEL_CIRCUMFERENCE;
-    public static final int ODOMETRY_POSITION_SLEEP_DELAY = 100;
+    public static final int ODOMETRY_POSITION_SLEEP_DELAY = 10;
     public static final double DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR = 10;
 
     // Drive constants
@@ -48,7 +48,7 @@ public class Vyncynt {
     OdometryPosition op;
     Thread opThread;
 
-    public Vyncynt(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Vyncynt(HardwareMap hardwareMap, Telemetry telemetry, boolean initOdometry) {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
