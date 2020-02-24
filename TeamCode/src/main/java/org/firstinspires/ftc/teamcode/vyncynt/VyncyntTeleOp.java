@@ -14,7 +14,7 @@ public class VyncyntTeleOp extends OpMode {
 
     @Override
     public void init() {
-        vyncynt = new Vyncynt(hardwareMap, telemetry);
+        vyncynt = new Vyncynt(hardwareMap, telemetry, false);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class VyncyntTeleOp extends OpMode {
 
     private void nom() {
         if(gamepad2.right_trigger > 0.3) {
-            vyncynt.nomNomNom(gamepad2.right_trigger);
+            vyncynt.nomNomNom(Range.clip(gamepad2.right_trigger * 1.3, 0, 1));
         } else if (gamepad2.right_bumper) {
             vyncynt.nomNomNom(Vyncynt.REVERSE_NOM_SPEED);
         } else {
