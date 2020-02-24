@@ -116,6 +116,10 @@ public class Vyncynt {
         telemetry.update();
     }
 
+    public OdometryPosition getOp() {
+        return op;
+    }
+
     public void straightDrive(double leftPower, double rightPower) {
         fl.setPower(leftPower);
         bl.setPower(leftPower);
