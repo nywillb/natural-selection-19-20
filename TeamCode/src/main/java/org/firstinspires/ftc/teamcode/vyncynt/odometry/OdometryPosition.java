@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vyncynt.odometry;
 
+import android.util.Log;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -154,6 +155,7 @@ public class OdometryPosition implements Runnable {
     public void run() {
         while (isRunning) {
             globalCoordinatePositionUpdate();
+            Log.println(99, "odometry", "hi");
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {

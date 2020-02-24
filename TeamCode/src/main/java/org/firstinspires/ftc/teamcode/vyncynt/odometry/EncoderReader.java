@@ -15,7 +15,7 @@ import java.io.IOException;
 public class EncoderReader extends LinearOpMode {
     @Override
     public void runOpMode() {
-        Vyncynt vyncynt = new Vyncynt(hardwareMap, telemetry);
+        Vyncynt vyncynt = new Vyncynt(hardwareMap, telemetry, false);
         ElapsedTime time = new ElapsedTime();
         IntelligentDesign id = new IntelligentDesign("Encoder log", MatchPhase.TELEOP);
 

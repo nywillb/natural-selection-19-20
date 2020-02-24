@@ -9,7 +9,7 @@ public class OdometryReturnHomeTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Vyncynt vyncynt = new Vyncynt(hardwareMap, telemetry);
+        Vyncynt vyncynt = new Vyncynt(hardwareMap, telemetry, true);
 
         waitForStart();
 
@@ -22,8 +22,10 @@ public class OdometryReturnHomeTest extends LinearOpMode {
 
             telemetry.update();
 
+            telemetry.addData("status", "doing stuff");
             vyncynt.driveToPosition(0, 0, 0.5, 1, this);
             vyncynt.rotateToAngle(0, 10, 0.5, this);
+            telemetry.update();
         }
 
         vyncynt.stop();

@@ -33,7 +33,7 @@ public class OdometryCalibration extends LinearOpMode {
     String rfName = "fr", rbName = "br", lfName = "fl", lbName = "bl";
     String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = lbName;
 
-    final double PIVOT_SPEED = 0.5;
+    final double PIVOT_SPEED = 0.4;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
     final double COUNTS_PER_INCH = Vyncynt.ODOMETER_TICKS_PER_INCH;
@@ -174,6 +174,7 @@ public class OdometryCalibration extends LinearOpMode {
         left_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_back.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         telemetry.addData("Status", "Hardware Map Init Complete");
