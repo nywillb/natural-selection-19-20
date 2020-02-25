@@ -100,14 +100,6 @@ public class Vyncynt {
         if(initOdometry) {
             op = new OdometryPosition(fl, fr, bl, ODOMETER_TICKS_PER_INCH, ODOMETRY_POSITION_SLEEP_DELAY);
 
-            // TODO: As needed adjust to make sure that odometry wheels spin in the right direction.
-            // Vertical left and right encoders should return positive values when they spin forward.
-            // Horizontal encoder should return positive values when it turns right.
-
-//        op.reverseLeftEncoder();
-//        op.reverseRightEncoder();
-//        op.reverseNormalEncoder();
-
             opThread = new Thread(op);
             opThread.start();
         }
