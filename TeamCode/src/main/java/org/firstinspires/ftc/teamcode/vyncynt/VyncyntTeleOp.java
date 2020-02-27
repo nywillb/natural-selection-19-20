@@ -79,6 +79,20 @@ public class VyncyntTeleOp extends OpMode {
         } else {
             vyncynt.nomNomNom(0);
         }
+
+        if(gamepad2.left_trigger > 0.3) {
+            vyncynt.closeClaw();
+        } else {
+            vyncynt.openClaw();
+        }
+
+        if(gamepad2.dpad_left) {
+            vyncynt.slideForward();
+        } else if (gamepad2.dpad_right) {
+            vyncynt.slideBackward();
+        } else {
+            vyncynt.stopSlide();
+        }
     }
 
     private void lift() {

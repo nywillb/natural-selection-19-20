@@ -21,7 +21,7 @@ public class OdometryPosition implements Runnable {
     //Position variables used for storage and calculations
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
     private double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
-    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
+    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, previousNormalEncoderWheelPosition = 0;
 
     //Algorithm constants
     private double robotEncoderWheelDistance;
@@ -43,19 +43,22 @@ public class OdometryPosition implements Runnable {
      *
      * @param verticalEncoderLeft  left odometry encoder, facing the vertical direction
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
-     * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
+     * @param normalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is
      *                             suggested)
      */
-    public OdometryPosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay) {
+    public OdometryPosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor normalEncoder, double COUNTS_PER_INCH, int threadSleepDelay) {
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
-        this.horizontalEncoder = horizontalEncoder;
+        this.horizontalEncoder = normalEncoder;
         sleepTime = threadSleepDelay;
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
+        previousVerticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
+        previousVerticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
+        previousNormalEncoderWheelPosition = (normalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
     }
 
     /**
@@ -75,7 +78,7 @@ public class OdometryPosition implements Runnable {
 
         //Get the components of the motion
         normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
-        double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
+        double rawHorizontalChange = normalEncoderWheelPosition - previousNormalEncoderWheelPosition;
         double horizontalChange = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
 
         double p = ((rightChange + leftChange) / 2);
@@ -87,7 +90,7 @@ public class OdometryPosition implements Runnable {
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
-        prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+        previousNormalEncoderWheelPosition = normalEncoderWheelPosition;
     }
 
     /**

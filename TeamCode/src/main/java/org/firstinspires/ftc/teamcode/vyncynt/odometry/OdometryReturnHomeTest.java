@@ -19,13 +19,14 @@ public class OdometryReturnHomeTest extends LinearOpMode {
             telemetry.addData("Θ", vyncynt.getOrientation());
 
             telemetry.addData("Status", "Give me a shove!");
-
             telemetry.update();
 
-            telemetry.addData("status", "doing stuff");
-            vyncynt.driveToPosition(0, 0, 0.5, 1, this);
-            vyncynt.rotateToAngle(0, 10, 0.5, this);
-            telemetry.update();
+            if(Math.hypot(vyncynt.getXCoordinate(), vyncynt.getYCoordinate()) > 300) {
+                telemetry.addData("status", "doing stuff");
+                telemetry.update();
+                vyncynt.driveToPosition(0, 0, 0.5, 200, this);
+                vyncynt.rotateToAngle(0, 3, 0.5, this);
+            }
         }
 
         vyncynt.stop();

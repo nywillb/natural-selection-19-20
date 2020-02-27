@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.vyncynt;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Util;
 import org.firstinspires.ftc.teamcode.vyncynt.odometry.OdometryPosition;
 
 public class Vyncynt {
@@ -13,7 +12,7 @@ public class Vyncynt {
     public static final double TICKS_PER_ODOMETER_ROTATION = 200.0;
     public static final double ODOMETER_TICKS_PER_INCH = TICKS_PER_ODOMETER_ROTATION / ODOMETRY_WHEEL_CIRCUMFERENCE;
     public static final int ODOMETRY_POSITION_SLEEP_DELAY = 10;
-    public static final double DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR = 10;
+    public static final double DRIVE_TO_POSITION_TURN_MARGIN_OF_ERROR = 30;
 
     // Drive constants
     public static final double MAXIMUM_DRIVE_POWER = 0.8;
@@ -29,6 +28,10 @@ public class Vyncynt {
     // Lift constants
     public static final double LIFT_SPEED = 0.7;
 
+    // Claw constants
+    public static final double CLAW_OPEN_POSITION = 1.00;
+    public static final double CLAW_CLOSED_POSITION = 0.50;
+
     public DcMotor fl;
     public DcMotor fr;
     public DcMotor bl;
@@ -37,7 +40,8 @@ public class Vyncynt {
     public DcMotor intakeL;
     public DcMotor intakeR;
 
-    public Servo intakeServo;
+    public Servo claw;
+    public Servo slideServo;
     public Servo flPlatform;
     public Servo blPlatform;
     public Servo frPlatform;
@@ -89,13 +93,14 @@ public class Vyncynt {
         intakeR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-//        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        claw = hardwareMap.get(Servo.class, "claw");
+        slideServo = hardwareMap.get(Servo.class, "slide");
 //        flPlatform = hardwareMap.get(Servo.class, "flPlatform");
 //        frPlatform = hardwareMap.get(Servo.class, "frPlatform");
 //        blPlatform = hardwareMap.get(Servo.class, "blPlatform");
 //        brPlatform = hardwareMap.get(Servo.class, "brPlatform");
 
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+//        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
         if(initOdometry) {
             op = new OdometryPosition(fl, fr, bl, ODOMETER_TICKS_PER_INCH, ODOMETRY_POSITION_SLEEP_DELAY);
@@ -110,6 +115,18 @@ public class Vyncynt {
 
     public OdometryPosition getOp() {
         return op;
+    }
+
+    public void stopSlide() {
+        slideServo.setPosition(0.5);
+    }
+
+    public void slideForward() {
+        slideServo.setPosition(0.6);
+    }
+
+    public void slideBackward() {
+        slideServo.setPosition(0.4);
     }
 
     public void straightDrive(double leftPower, double rightPower) {
@@ -180,16 +197,16 @@ public class Vyncynt {
     }
 
     public void rotateToAngle(double theta, double marginOfError, double power, LinearOpMode opMode) {
-        double dist = Util.calculateAngularDistance(theta, marginOfError);
+        double dist = Math.abs(getOrientation() - theta)%360;
         double originalDist = dist;
         while (opMode.opModeIsActive() && Math.abs(dist) < marginOfError) {
-            dist = Util.calculateAngularDistance(theta, marginOfError);
+            dist = Math.abs(getOrientation() - theta)%360;;
             if(dist < 0 && dist > 0.15 * originalDist) {
                 rotateCounterclockwise(0.5*power);
             } else if (dist < 0 ) {
                 rotateCounterclockwise(power);
             } else if (dist < 0.15 * originalDist) {
-                rotateCounterclockwise(0.5*power);
+                rotateClockwise(0.5*power);
             } else {
                 rotateClockwise(power);
             }
@@ -217,5 +234,13 @@ public class Vyncynt {
         }
 
         stop();
+    }
+
+    public void closeClaw() {
+        claw.setPosition(CLAW_CLOSED_POSITION);
+    }
+
+    public void openClaw() {
+        claw.setPosition(CLAW_OPEN_POSITION);
     }
 }
